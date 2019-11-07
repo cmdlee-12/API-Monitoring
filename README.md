@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # RESTest - Automatic API Monitoring
 
 ------
@@ -191,3 +192,6 @@ By default, posting to slack is disabled. You can enable it in the `checkStatus`
 
 
 
+=======
+# API-Monitoring
+>>>>>>> 773affead607760d41f88539fe886662ad66cc8b
