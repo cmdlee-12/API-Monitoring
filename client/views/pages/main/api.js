@@ -1,5 +1,18 @@
-Template.mainDashboard.onRendered(function () {
-
+Template.api.onRendered(function () {
+  // Meteor.call('generate_pdf', function (err, res) {
+  //   if (err) {
+  //     console.error(err);
+  //   } else if (res) {
+  //     var html = '<html>' +
+  //       '<style>html, body { padding: 0; margin: 0; } iframe { width: 100%; height: 100%; border: 0;}  </style>' +
+  //       '<body>' + res +
+  //       '<iframe type="application/pdf" src="' + '"></iframe>' +
+  //       '</body></html>';
+  //     a = window.open("about:blank",html);
+  //     a.document.write(html);
+  //     a.document.close();
+  //   }
+  // });
   Tracker.autorun(function () {
 
     $(".btn-group > .btn").click(function () {
@@ -59,12 +72,12 @@ Template.mainDashboard.onRendered(function () {
       }
 
     }
-
   });
+  $('#apiTable').DataTable();
 });
 
 
-Template.mainDashboard.events({
+Template.api.events({
   "click #add": function (event, template) {
     var apiName = document.getElementById('formGroupExampleInput').value;
     var apiAddress1 = document.getElementById('formGroupExampleInput2').value;
@@ -80,10 +93,10 @@ Template.mainDashboard.events({
       var authentication = document.getElementById('authorization').value;
       var b = document.getElementById("addingFrequency");
       var frequency = b.options[b.selectedIndex].text;
-      console.log(frequency);
 
       Meteor.call("updateApi", apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, function (error, result) {
         if (error) {
+          toastr.error(JSON.stringify(result, null, "\t"), 'Error');
           console.log("error", error);
         }
         if (result) {
@@ -120,20 +133,18 @@ Template.mainDashboard.events({
     result = event.currentTarget.dataset.value;
     var frequency = result.split(/,(.+)/)[0];
     var id = result.split(/,(.+)/)[1];
+    console.log("id" + id + " " + "frequency " + frequency)
     Meteor.call("changeFreqency", frequency, id, function (error, result) {
       if (error) {
         console.log("error", error);
       }
-      if (result) {
-
-      }
-
+      if (result) {}
     });
   }
 
 });
 
-Template.mainDashboard.helpers({
+Template.api.helpers({
   apis: function () {
     var apiAddress1 = apiAddress.find({}).fetch();
     var final = [];
@@ -142,6 +153,7 @@ Template.mainDashboard.helpers({
         final.push({
           _id: apiAddress1[i]._id,
           createdByName: apiAddress1[i].createdByName,
+          createdBy: apiAddress1[i].createdBy,
           apiName: apiAddress1[i].apiName,
           apiAddress: apiAddress1[i].apiAddress,
           getOrPost: apiAddress1[i].getOrPost,
@@ -158,7 +170,6 @@ Template.mainDashboard.helpers({
       } else {
         final.push({
           _id: apiAddress1[i]._id,
-          createdByName: apiAddress1[i].createdByName,
           apiName: apiAddress1[i].apiName,
           apiAddress: apiAddress1[i].apiAddress,
           getOrPost: apiAddress1[i].getOrPost,
@@ -184,9 +195,9 @@ Template.mainDashboard.helpers({
       return 0;
     }
   },
-  errors: function () {
-    return apiErrors.findOne({}).errors;
-  },
+  // errors: function () {
+  //   return apiErrors.findOne({}).errors;
+  // },
   todaysDate: function () {
     var today = new Date();
     var dd = today.getDate();
@@ -201,68 +212,5 @@ Template.mainDashboard.helpers({
     }
     var today = dd + '/' + mm + '/' + yyyy;
     return today;
-  },
-  getCompany: function () {
-    var company1 = Clients.find({}, {
-      sort: {
-        name: 1
-      }
-    }).fetch();
-    var info = [];
-    for (var x = 0; x < company1.length; x++) {
-
-      info.push({
-        id: company1[x]._id,
-        name: company1[x].name,
-        email: company1[x].email,
-        url: company1[x].url
-
-      });
-    }
-    return info;
-  },
-  countCompany: function(){
-    var count = Meteor.users.find({}).count();
-
-    return count;
-  },
-  countApi: function(){
-    var count = apiAddress.find({}).count();
-
-    return count;
-  },
-  countGood: function(){
-    var count = apiAddress.find({responseTime: { $ne: "FAIL" }}).count();
-
-    return count;
-  },
-  countFail: function(){
-    var count = apiAddress.find({responseTime: "FAIL"}).count();
-
-    return count;
-  },
-  countUptime: function(){
-    var apiAddress1 = apiAddress.find({}).fetch();
-    var final = 0;
-    for (var i = 0; i < apiAddress1.length; i++) {
-      for (var x = 0; x < apiAddress1[i].statusRecord.length; x++){
-        if (apiAddress1[i].statusRecord[x].responseTime > 0) {
-          final += 1;
-        }
-      }
-    }
-    return final;
-  },
-  countDowntime: function(){
-    var apiAddress1 = apiAddress.find({}).fetch();
-    var final = 0;
-    for (var i = 0; i < apiAddress1.length; i++) {
-      for (var x = 0; x < apiAddress1[i].statusRecord.length; x++){
-        if (apiAddress1[i].statusRecord[x].responseTime == 0) {
-          final += 1;
-        }
-      }
-    }
-    return final;
   }
 });

@@ -5,6 +5,7 @@ var PostSubs = new SubsManager({
     // any subscription will be expire after 5 minute, if it's not subscribed again
     expireIn: 5
 });
+Meteor.subscribe("users");
 
 Router.configure({
     layoutTemplate: 'mainLayout',
@@ -16,10 +17,14 @@ Router.route('/', function () {
     if (!Meteor.userId()) {
         this.render('login');
         this.layout('blankLayout');
-    }
-    else {
+    } else {
         Router.go('/dashboard');
     }
+
+});
+Router.route('/login', function () {
+    this.render('login');
+    this.layout('blankLayout');
 
 });
 
@@ -44,7 +49,21 @@ Router.route('/register', function () {
     this.layout('blankLayout');
 });
 
-
 Router.route('/notFound', function () {
     this.render('notFound');
+});
+
+Router.route('/Clients', function () {
+    this.render('client');
+    this.layout('mainLayout');
+});
+
+Router.route('/Api', function () {
+    this.render('api');
+    this.layout('mainLayout');
+});
+
+Router.route('/Profile', function () {
+    this.render('profile');
+    this.layout('mainLayout');
 });

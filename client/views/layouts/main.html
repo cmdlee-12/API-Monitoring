@@ -1,30 +1,15 @@
 <template name="mainLayout">
 
-    <!-- Wrapper-->
-    <div id="wrapper" class="dark_gray-bg">
+    <div class="page-wrapper light-gray-bg">
 
-        <!-- Navigation -->
+        <!-- Page wrapper -->
+        <!-- {{> topNavbar }} -->
         {{> navigation}}
-        <!-- Page wraper -->
-
-        <div id="page-wrapper" class="white-bg">
-
-            <!-- Page wrapper -->
-            {{> topNavbar }}
-
-            <!-- Main view  -->
-            {{> yield}}
-
-            <!-- Footer -->
-            {{> footer }}
-
-        </div>
-        <!-- End page wrapper-->
-
-        <!-- Right Sidebar -->
-        <!--{{> rightSidebar }}-->
+        <!-- Main view  -->
+        {{> yield}}
+        {{> profile}}
+        <!-- Footer -->
+        <!-- {{> footer }} -->
 
     </div>
-    <!-- End wrapper-->
-
 </template>

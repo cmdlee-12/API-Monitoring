@@ -6,6 +6,7 @@ Template.mainLayout.rendered = function () {
             $('body').addClass('body-small')
         } else {
             $('body').removeClass('body-small')
+            // $('#sidebar').toggleClass('active');
         }
     });
 
@@ -33,6 +34,7 @@ Template.mainLayout.rendered = function () {
             }
         }
     });
+    
 
 
     // SKIN OPTIONS

@@ -1,4 +1,5 @@
 import '../lib/collections.js'
+import { SSR, Template } from 'meteor/meteorhacks:ssr';
 
 var moment = Npm.require('moment');
 var slackBot = Npm.require('slack-bot')(Meteor.settings.private.webhookUrl);
@@ -12,10 +13,27 @@ function postToSlack(message) {
     unfurl_links: true,
     unfurl_media: true,
   }, function (err, res) {
-    if (err) { throw err; }
+    if (err) {
+      throw err;
+    }
     // console.log(res);
   });
 }
+
+Meteor.users.allow({
+  insert: function (userId, doc) {
+    return userId;
+  },
+
+  update: function (userId, doc, fields, modifier) {
+    return doc.fields === fields;
+
+  },
+  remove: function (userId, doc) {
+    // can only remove your own documents
+    return doc.userId === userId;
+  }
+})
 
 Meteor.startup(() => {
   // code to run on server at startup
@@ -44,11 +62,24 @@ Meteor.startup(() => {
     if (daysDifference < 0) {
       var statusRecord = [];
       var lastReset = new Date();
-      individualGraphsTasks.update({ createdBy: task.createdBy }, { $set: { lastReset: lastReset } });
-      apiAddress.update({ createdBy: task.createdBy }, { $set: { statusRecord: statusRecord } }, { multi: true });
+      individualGraphsTasks.update({
+        createdBy: task.createdBy
+      }, {
+        $set: {
+          lastReset: lastReset
+        }
+      });
+      apiAddress.update({
+        createdBy: task.createdBy
+      }, {
+        $set: {
+          statusRecord: statusRecord
+        }
+      }, {
+        multi: true
+      });
       Meteor.call("resetIndividualGraphs", task.createdBy);
-    }
-    else {
+    } else {
       Meteor.call("resetIndividualGraphs", task.createdBy);
     }
 
@@ -60,16 +91,58 @@ Meteor.startup(() => {
 
   SyncedCron.start();
 });
+
 Meteor.methods({
+  'generate_pdf': function(){
+    var fs = Npm.require('fs');
+    var Future = Npm.require('fibers/future');
+    var fut = new Future();
+    var fileName = "pokemon-report.pdf";
+
+    SSR.compileTemplate('agreement', Assets.getText('api.html'));
+    var html_string = SSR.render('agreement');
+
+    var options = {
+          "paperSize": {
+              "format": "Letter",
+              "orientation": "portrait",
+              "margin": "1cm"
+          },
+          siteType: 'html'
+    };
+
+      webshot(html_string, fileName, options, function(err) {
+          fs.readFile(fileName, function (err, data) {
+              if (err) {
+                  return console.log(err);
+              }
+              fs.unlinkSync(fileName);
+              fut.return(data);
+          });
+      });
+
+      let pdfData = fut.wait();
+      let base64String = new Buffer(pdfData).toString('base64');
+
+      return base64String;
+  },
   'updateApi': function (name, address, getOrPost, usageOrStatus, authentication, frequency) {
     console.dir(address);
     console.dir(authentication);
     var currentUser = Meteor.userId();
-    if (apiAddress.find({ createdBy: currentUser, apiAddress: address }).count() > 0) {
+    var username = Meteor.users.findOne({
+      _id: currentUser
+    }).username;
+    console.log(currentUser);
+    if (apiAddress.find({
+        createdBy: currentUser,
+        apiAddress: address
+      }).count() > 0) {
       return "You have used this API url for a different API already";
-    }
-    else {
-      addingApiSearch.insert({ createdBy: currentUser });
+    } else {
+      addingApiSearch.insert({
+        createdBy: currentUser
+      });
 
       if (getOrPost === "GET") {
         try {
@@ -77,69 +150,184 @@ Meteor.methods({
           var responseTime;
           if (authentication) {
             var start = new Date();
-            res = HTTP.get(address,
-              {
-                auth: authentication
-              });
+            res = HTTP.get(address, {
+              auth: authentication
+            });
             responseTime = new Date() - start;
             var postingTime = moment(start).format("MMM Do YYYY, h:mm:ss a");
             try {
-              apiAddress.insert({ createdBy: currentUser, apiName: name, apiAddress: address, authentication: authentication, getOrPost: getOrPost, usageOrStatus: usageOrStatus, response: res.data, updatedTime: postingTime, headers: res.headers, status: "pass", frequency: frequency, responseTime: responseTime });
+              apiAddress.insert({
+                createdByName: username,
+                createdBy: currentUser,
+                apiName: name,
+                apiAddress: address,
+                authentication: authentication,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: res.data,
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime
+              });
 
+            } catch (err) {
+              apiAddress.insert({
+                createdByName: username,
+                createdBy: currentUser,
+                apiName: name,
+                apiAddress: address,
+                authentication: authentication,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: "Response was too long.",
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime
+              });
             }
-            catch (err) {
-              apiAddress.insert({ createdBy: currentUser, apiName: name, apiAddress: address, authentication: authentication, getOrPost: getOrPost, usageOrStatus: usageOrStatus, response: "Response was too long.", updatedTime: postingTime, headers: res.headers, status: "pass", frequency: frequency, responseTime: responseTime });
-            }
-          }
-          else {
+          } else {
             var start = new Date();
             res = HTTP.get(address);
             responseTime = new Date() - start;
             var postingTime = moment(start).format("MMM Do YYYY, h:mm:ss a");
             try {
-              apiAddress.insert({ createdBy: currentUser, apiName: name, apiAddress: address, getOrPost: getOrPost, usageOrStatus: usageOrStatus, response: res.data, updatedTime: postingTime, headers: res.headers, status: "pass", frequency: frequency, responseTime: responseTime });
+              apiAddress.insert({
+                createdByName: username,
+                createdBy: currentUser,
+                apiName: name,
+                apiAddress: address,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: res.data,
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime
+              });
 
-            }
-            catch (err) {
-              apiAddress.insert({ createdBy: currentUser, apiName: name, apiAddress: address, getOrPost: getOrPost, usageOrStatus: usageOrStatus, response: "Response was too long.", updatedTime: postingTime, headers: res.headers, status: "pass", frequency: frequency, responseTime: responseTime });
+            } catch (err) {
+              apiAddress.insert({
+                createdByName: username,
+                createdBy: currentUser,
+                apiName: name,
+                apiAddress: address,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: "Response was too long.",
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime
+              });
             }
           }
-          if (apiAddress.find({ createdBy: currentUser }).count() === 1) {
+          if (apiAddress.find({
+              createdBy: currentUser
+            }).count() === 1) {
             var start = new Date();
-            if (apiErrors.find({ createdBy: currentUser }).count === 0) {
-              apiErrors.insert({ createdBy: currentUser });
+            if (apiErrors.find({
+                createdBy: currentUser
+              }).count === 0) {
+              apiErrors.insert({
+                createdBy: currentUser
+              });
             }
             Meteor.call("overallErrorChecker", currentUser);
             Meteor.call("resetIndividualGraphs", currentUser);
-            individualGraphsTasks.remove({ createdBy: currentUser });
-            individualGraphsTasks.insert({ createdBy: currentUser, lastReset: start });
-            overallGraphsTasks.remove({ createdBy: currentUser });
-            overallGraphsTasks.insert({ createdBy: currentUser });
+            individualGraphsTasks.remove({
+              createdBy: currentUser
+            });
+            individualGraphsTasks.insert({
+              createdBy: currentUser,
+              lastReset: start
+            });
+            overallGraphsTasks.remove({
+              createdBy: currentUser
+            });
+            overallGraphsTasks.insert({
+              createdBy: currentUser
+            });
           }
           //console.dir(res.statusCode); if you want to show the status code of the API call
-        }
-        catch (err) {
-          addingApiSearch.remove({ createdBy: currentUser });
+        } catch (err) {
+          addingApiSearch.remove({
+            createdBy: currentUser
+          });
           console.log("Error: ", err);
 
           return err.response.content;
         }
-        addingApiSearch.remove({ createdBy: currentUser });
-        var apiId = apiAddress.findOne({ createdBy: currentUser, apiName: name, apiAddress: address })._id;
+        addingApiSearch.remove({
+          createdBy: currentUser
+        });
+        var apiId = apiAddress.findOne({
+          createdBy: currentUser,
+          apiName: name,
+          apiAddress: address
+        })._id;
         Meteor.call('apiRefresher', frequency, apiId);
-        FutureTasks.insert({ createdBy: currentUser, frequency: frequency, apiId: apiId });
-      }
-      else {
+        FutureTasks.insert({
+          createdBy: currentUser,
+          frequency: frequency,
+          apiId: apiId
+        });
+      } else {
         var res = HTTP.post(address);
-        apiAddress.insert({ createdBy: currentUser, apiName: name, apiAddress: address, getOrPost: getOrPost, usageOrStatus: usageOrStatus, path: path, response: res.data });
+        apiAddress.insert({
+          createdByName: username,
+          createdBy: currentUser,
+          apiName: name,
+          apiAddress: address,
+          getOrPost: getOrPost,
+          usageOrStatus: usageOrStatus,
+          path: path,
+          response: res.data
+        });
       }
     }
 
   },
+
+  'updateProfile': function (companyName, companyEmail, websiteURL, newPassword, oldPassword) {
+    var id = Meteor.userId();
+    // var checked = Accounts._checkPassword(id, oldPassword);
+    // console.log(checked);
+
+    // var currentPW = Meteor.users.findOne({
+    //   _id: id
+    // }).services.password.bcrypt;
+
+    Meteor.users.update({
+      _id: id
+    }, {
+      $set: {
+        username: companyName,
+        "profile.url": websiteURL,
+        "emails.0.address": companyEmail
+      }
+    });
+
+    // Accounts._checkPassword(id, oldPassword)
+    // Accounts.setPassword(id, newPassword, {
+    //   logout: false
+    // })
+  },
+
   'removeApi': function (id) {
-    apiAddress.remove({ _id: id });
-    FutureTasks.remove({ apiId: id });
+    apiAddress.remove({
+      _id: id
+    });
+    FutureTasks.remove({
+      apiId: id
+    });
     SyncedCron.remove(id);
+
   },
   'resetIndividualGraphs': function (currentUser) {
     SyncedCron.add({
@@ -150,8 +338,22 @@ Meteor.methods({
       job: function () {
         var statusRecord = [];
         var lastReset = new Date();
-        individualGraphsTasks.update({ createdBy: currentUser }, { $set: { lastReset: lastReset } });
-        apiAddress.update({ createdBy: currentUser }, { $set: { statusRecord: statusRecord } }, { multi: true });
+        individualGraphsTasks.update({
+          createdBy: currentUser
+        }, {
+          $set: {
+            lastReset: lastReset
+          }
+        });
+        apiAddress.update({
+          createdBy: currentUser
+        }, {
+          $set: {
+            statusRecord: statusRecord
+          }
+        }, {
+          multi: true
+        });
         return "resettingIndividualGraphs";
       }
     });
@@ -164,8 +366,14 @@ Meteor.methods({
         return parser.text('every 1 hour');
       },
       job: function () {
-        var errors = apiAddress.find({ createdBy: currentUser, status: "fail" }).fetch();
-        var totalErrors = apiAddress.find({ createdBy: currentUser, status: "fail" }).count();
+        var errors = apiAddress.find({
+          createdBy: currentUser,
+          status: "fail"
+        }).fetch();
+        var totalErrors = apiAddress.find({
+          createdBy: currentUser,
+          status: "fail"
+        }).count();
         var errorTime = new Date();
         errorTime = moment(errorTime).format("MMM Do YYYY, h:mm:ss a");
         if (totalErrors > 0) {
@@ -177,21 +385,44 @@ Meteor.methods({
               errorTime: errorTime
             });
           }
-          apiErrors.update({ createdBy: currentUser }, { $addToSet: { errors: error } });
-          apiErrors.update({ createdBy: currentUser }, { $set: { totalErrors: totalErrors } });
-        }
-        else {
+          apiErrors.update({
+            createdBy: currentUser
+          }, {
+            $addToSet: {
+              errors: error
+            }
+          });
+          apiErrors.update({
+            createdBy: currentUser
+          }, {
+            $set: {
+              totalErrors: totalErrors
+            }
+          });
+        } else {
           var error = {
             apiName: "No errors",
             totalErrors: 0,
             errorTime: errorTime
           }
-          apiErrors.update({ createdBy: currentUser }, { $addToSet: { errors: error } });
-          apiErrors.update({ createdBy: currentUser }, { $set: { totalErrors: 0 } });
+          apiErrors.update({
+            createdBy: currentUser
+          }, {
+            $addToSet: {
+              errors: error
+            }
+          });
+          apiErrors.update({
+            createdBy: currentUser
+          }, {
+            $set: {
+              totalErrors: 0
+            }
+          });
         }
 
-        //FutureTasks.remove(id);
-        //SyncedCron.remove(id);
+        FutureTasks.remove(id);
+        SyncedCron.remove(id);
         return "errorChecker";
       }
     });
@@ -200,11 +431,26 @@ Meteor.methods({
 
   'changeFreqency': function (frequency, id) {
     console.dir("Changing frequncy");
+    console.log("Changing frequncy");
     var currentUser = Meteor.userId();
     SyncedCron.remove(id);
-    apiAddress.update({ _id: id, createdBy: currentUser }, { $set: { frequency: frequency } });
+    apiAddress.update({
+      _id: id,
+      createdBy: currentUser
+    }, {
+      $set: {
+        frequency: frequency
+      }
+    });
     Meteor.call("apiRefresher", frequency, id);
-    FutureTasks.update({ createdBy: currentUser, apiId: id }, { $set: { frequency: frequency } });
+    FutureTasks.update({
+      createdBy: currentUser,
+      apiId: id
+    }, {
+      $set: {
+        frequency: frequency
+      }
+    });
   },
 
   'apiRefresher': function (frequency, apiId) {
@@ -225,8 +471,8 @@ Meteor.methods({
       },
       job: function () {
         Meteor.call("checkStatus", apiId, currentUser);
-        //FutureTasks.remove(id);
-        //SyncedCron.remove(id);
+        // FutureTasks.remove(id);
+        // SyncedCron.remove(id);
         return apiId;
       }
     });
@@ -234,13 +480,15 @@ Meteor.methods({
 
   'checkStatus': function (apiId, currentUser) {
     console.dir("checking status");
-    var api = apiAddress.findOne({ _id: apiId, createdBy: currentUser });
+    var api = apiAddress.findOne({
+      _id: apiId,
+      createdBy: currentUser
+    });
     var address = api.apiAddress;
     var authentication;
     if (api.authentication) {
       authentication = api.authentication;
-    }
-    else {
+    } else {
       authentication = '';
     }
     var getOrPost = api.getOrPost
@@ -253,13 +501,11 @@ Meteor.methods({
         var responseTime;
         if (authentication) {
           var start = new Date();
-          res = HTTP.get(address,
-            {
-              auth: authentication
-            });
+          res = HTTP.get(address, {
+            auth: authentication
+          });
           responseTime = new Date() - start;
-        }
-        else {
+        } else {
           var start = new Date();
           res = HTTP.get(address);
           responseTime = new Date() - start;
@@ -272,38 +518,120 @@ Meteor.methods({
         try {
           console.dir(statusRecord);
 
-          apiAddress.update({ _id: apiId, createdBy: currentUser }, { $set: { response: res.data, headers: res.headers, updatedTime: postingTime, responseTime: responseTime, status: "pass" } });
-          apiAddress.update({ _id: apiId, createdBy: currentUser }, { $push: { statusRecord: statusRecord } });
+          apiAddress.update({
+            _id: apiId,
+            createdBy: currentUser
+          }, {
+            $set: {
+              response: res.data,
+              headers: res.headers,
+              updatedTime: postingTime,
+              responseTime: responseTime,
+              status: "pass"
+            }
+          });
+          apiAddress.update({
+            _id: apiId,
+            createdBy: currentUser
+          }, {
+            $push: {
+              statusRecord: statusRecord
+            }
+          });
+        } catch (err) {
+          apiAddress.update({
+            _id: apiId,
+            createdBy: currentUser
+          }, {
+            $set: {
+              response: "Response is too long.",
+              headers: res.headers,
+              responseTime: responseTime,
+              status: "pass",
+              updatedTime: postingTime
+            }
+          }, {
+            $push: {
+              statusRecord: statusRecord
+            }
+          });
+          apiAddress.update({
+            _id: apiId,
+            createdBy: currentUser
+          }, {
+            $push: {
+              statusRecord: statusRecord
+            }
+          });
         }
-        catch (err) {
-          apiAddress.update({ _id: apiId, createdBy: currentUser }, { $set: { response: "Response is too long.", headers: res.headers, responseTime: responseTime, status: "pass", updatedTime: postingTime } }, { $push: { statusRecord: statusRecord } });
-          apiAddress.update({ _id: apiId, createdBy: currentUser }, { $push: { statusRecord: statusRecord } });
-        }
-      }
-      catch (err) {
+      } catch (err) {
         console.dir("Line 14: " + err);
         var statusRecord = {
           time: postingHour,
           responseTime: 0
         }
-        apiAddress.update({ _id: apiId, createdBy: currentUser }, { $set: { response: err, status: "fail", updatedTime: postingTime, responseTime: "FAIL" } });
-        apiAddress.update({ _id: apiId, createdBy: currentUser }, { $push: { statusRecord: statusRecord } });
-        var error = apiAddress.findOne({ _id: apiId, createdBy: currentUser }).apiName;
-        var totalErrors = apiAddress.find({ createdBy: currentUser, status: "fail" }).count();
+        apiAddress.update({
+          _id: apiId,
+          createdBy: currentUser
+        }, {
+          $set: {
+            response: err,
+            status: "fail",
+            updatedTime: postingTime,
+            responseTime: "FAIL"
+          }
+        });
+        apiAddress.update({
+          _id: apiId,
+          createdBy: currentUser
+        }, {
+          $push: {
+            statusRecord: statusRecord
+          }
+        });
+        var error = apiAddress.findOne({
+          _id: apiId,
+          createdBy: currentUser
+        }).apiName;
+        var totalErrors = apiAddress.find({
+          createdBy: currentUser,
+          status: "fail"
+        }).count();
         console.log();
 
-        apiErrors.update({ createdBy: currentUser }, { $addToSet: { errors: error } });
-        apiErrors.update({ createdBy: currentUser }, { $set: { totalErrors: totalErrors } });
+        apiErrors.update({
+          createdBy: currentUser
+        }, {
+          $addToSet: {
+            errors: error
+          }
+        });
+        apiErrors.update({
+          createdBy: currentUser
+        }, {
+          $set: {
+            totalErrors: totalErrors
+          }
+        });
 
-        var userEmail = Meteor.users.findOne({ _id: currentUser }).emails[0].address;
+        var userEmail = Meteor.users.findOne({
+          _id: currentUser
+        }).emails[0].address;
 
         // Meteor.call("sendErrorEmail", error, userEmail);
         // Meteor.call("postToSlack", "The following API failed at " + postingTime + ": " + error);
       }
-    }
-    else {
+    } else {
       var res = HTTP.post(address);
-      apiAddress.insert({ createdBy: currentUser, apiName: name, apiAddress: address, getOrPost: getOrPost, usageOrStatus: usageOrStatus, path: path, response: res.data });
+      apiAddress.insert({
+        createdBy: currentUser,
+        apiName: name,
+        apiAddress: address,
+        getOrPost: getOrPost,
+        usageOrStatus: usageOrStatus,
+        path: path,
+        response: res.data
+      });
     }
   },
   "sendErrorEmail": function (api, userEmail) {

@@ -23,7 +23,7 @@ raix:handlebar-helpers
 twbs:bootstrap
 http
 meteorhacks:subs-manager
-accounts-password@1.3.6
+accounts-password
 juliancwirko:s-alert-scale
 fortawesome:fontawesome
 chrismbeckett:toastr
@@ -31,3 +31,7 @@ percolate:synced-cron
 babrahams:editable-text
 meteorhacks:ssr
 email@1.2.1
+accounts-base
+menway:jquery-datatables
+pascoual:pdfjs@=1.0.68
+bryanmorgan:webshot

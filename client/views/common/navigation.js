@@ -3,11 +3,12 @@
 // Used only on OffCanvas layout
 Template.navigation.events({
 
-    'click .close-canvas-menu' : function(){
-        $('body').toggleClass("mini-navbar");
+    'click #sidebarCollapse' : function(event, template){
+        $('#sidebar').toggleClass('active');
+        console.log("hello");
     }
-});
-
-Template.navigation.helpers({
-
+    // 'click #sidebarCollapse' : function(){
+    //     $('#sidebar').toggleClass('active');
+    //     console.log("hello");
+    // }
 });
