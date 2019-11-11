@@ -46,3 +46,10 @@ Meteor.publish("users", function () {
     }
   });
 });
+
+Meteor.publish("properties", function () {
+
+  return Properties.find({
+    createdBy: this.userId
+  });
+});

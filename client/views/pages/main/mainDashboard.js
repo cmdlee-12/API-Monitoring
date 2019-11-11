@@ -92,6 +92,38 @@ Template.mainDashboard.events({
       });
     }
   },
+  //PUT ADD PROPERTY CODE HERE 
+  "click #add-property": function (event, template) {
+    var name = $('#propertyName').val();
+    var url = $('#propertyURL').val();
+    var currentUser = Meteor.userId();
+
+    if (Properties.find({createdBy: currentUser, propertyName: name}).count() > 0) {
+      $(".addProperty").modal("hide");
+      $(".modal-backdrop.fade.show").addClass("remove-backdrop")
+      Swal.fire({
+        type: 'error',
+        title: 'Oops...',
+        text: 'Fill up the required fields'
+      })
+    } else {
+      Meteor.call("addProperties", name, url, function (error, result) {
+        if (error) {
+          console.log("error", error);
+        } else {
+          $(".addProperty").modal("hide");
+          $(".modal-backdrop.fade.show").addClass("remove-backdrop")
+          Swal.fire(
+            'Good job!',
+            'You have successfully added a new client!',
+            'success'
+          )
+        }
+      });
+
+    }
+  },
+  //END
   "click #removeApi": function (event, template) {
     result = event.currentTarget.dataset.value;
     Meteor.call("removeApi", result, function (error, result) {
@@ -221,31 +253,37 @@ Template.mainDashboard.helpers({
     }
     return info;
   },
-  countCompany: function(){
+  countCompany: function () {
     var count = Meteor.users.find({}).count();
 
     return count;
   },
-  countApi: function(){
+  countApi: function () {
     var count = apiAddress.find({}).count();
 
     return count;
   },
-  countGood: function(){
-    var count = apiAddress.find({responseTime: { $ne: "FAIL" }}).count();
+  countGood: function () {
+    var count = apiAddress.find({
+      responseTime: {
+        $ne: "FAIL"
+      }
+    }).count();
 
     return count;
   },
-  countFail: function(){
-    var count = apiAddress.find({responseTime: "FAIL"}).count();
+  countFail: function () {
+    var count = apiAddress.find({
+      responseTime: "FAIL"
+    }).count();
 
     return count;
   },
-  countUptime: function(){
+  countUptime: function () {
     var apiAddress1 = apiAddress.find({}).fetch();
     var final = 0;
     for (var i = 0; i < apiAddress1.length; i++) {
-      for (var x = 0; x < apiAddress1[i].statusRecord.length; x++){
+      for (var x = 0; x < apiAddress1[i].statusRecord.length; x++) {
         if (apiAddress1[i].statusRecord[x].responseTime > 0) {
           final += 1;
         }
@@ -253,11 +291,11 @@ Template.mainDashboard.helpers({
     }
     return final;
   },
-  countDowntime: function(){
+  countDowntime: function () {
     var apiAddress1 = apiAddress.find({}).fetch();
     var final = 0;
     for (var i = 0; i < apiAddress1.length; i++) {
-      for (var x = 0; x < apiAddress1[i].statusRecord.length; x++){
+      for (var x = 0; x < apiAddress1[i].statusRecord.length; x++) {
         if (apiAddress1[i].statusRecord[x].responseTime == 0) {
           final += 1;
         }

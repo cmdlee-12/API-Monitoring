@@ -1,5 +1,8 @@
 import '../lib/collections.js'
-import { SSR, Template } from 'meteor/meteorhacks:ssr';
+import {
+  SSR,
+  Template
+} from 'meteor/meteorhacks:ssr';  
 
 var moment = Npm.require('moment');
 var slackBot = Npm.require('slack-bot')(Meteor.settings.private.webhookUrl);
@@ -93,38 +96,46 @@ Meteor.startup(() => {
 });
 
 Meteor.methods({
-  'generate_pdf': function(){
-    var fs = Npm.require('fs');
-    var Future = Npm.require('fibers/future');
-    var fut = new Future();
-    var fileName = "pokemon-report.pdf";
+  // 'generate_pdf': function(){
+  //   var fs = Npm.require('fs');
+  //   var Future = Npm.require('fibers/future');
+  //   var fut = new Future();
+  //   var fileName = "pokemon-report.pdf";
 
-    SSR.compileTemplate('agreement', Assets.getText('api.html'));
-    var html_string = SSR.render('agreement');
+  //   SSR.compileTemplate('agreement', Assets.getText('api.html'));
+  //   var html_string = SSR.render('agreement');
 
-    var options = {
-          "paperSize": {
-              "format": "Letter",
-              "orientation": "portrait",
-              "margin": "1cm"
-          },
-          siteType: 'html'
-    };
+  //   var options = {
+  //         "paperSize": {
+  //             "format": "Letter",
+  //             "orientation": "portrait",
+  //             "margin": "1cm"
+  //         },
+  //         siteType: 'html'
+  //   };
 
-      webshot(html_string, fileName, options, function(err) {
-          fs.readFile(fileName, function (err, data) {
-              if (err) {
-                  return console.log(err);
-              }
-              fs.unlinkSync(fileName);
-              fut.return(data);
-          });
+  //     webshot(html_string, fileName, options, function(err) {
+  //         fs.readFile(fileName, function (err, data) {
+  //             if (err) {
+  //                 return console.log(err);
+  //             }
+  //             fs.unlinkSync(fileName);
+  //             fut.return(data);
+  //         });
+  //     });
+
+  //     let pdfData = fut.wait();
+  //     let base64String = new Buffer(pdfData).toString('base64');
+
+  //     return base64String;
+  // },
+  'addProperties': function (name, url) {
+    var currentUser = Meteor.userId();
+      Properties.insert({
+        createdBy: currentUser,
+        propertyName: name,
+        propertyURL: url
       });
-
-      let pdfData = fut.wait();
-      let base64String = new Buffer(pdfData).toString('base64');
-
-      return base64String;
   },
   'updateApi': function (name, address, getOrPost, usageOrStatus, authentication, frequency) {
     console.dir(address);

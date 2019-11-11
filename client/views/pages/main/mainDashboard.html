@@ -32,6 +32,37 @@
           <img src="newspaper.svg" alt="newspaper" class="img-fluid">
         </div>
       </div>
+
+      <!-- ADD PROPERTY CODE HERE-->
+      <div class="row align-items-center my-5">
+        <div class="col-lg-6">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".addProperty">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i></button>
+          <div class="modal fade addProperty" tabindex="-1" role="dialog" aria-labelledby="addProperty"
+            aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                <div class="modal-header">Add Property Details</div>
+                <div class="modal-body">
+                  <form>
+                    <div class="form-group">
+                      <label for="propertyName">Property Name</label>
+                      <input class="form-control" id="propertyName" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                      <label for="propertyURL">Property URL</label>
+                      <input class="form-control" id="propertyURL" placeholder="Url">
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" id="add-property">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {{#if $eq currentUser.profile.role 'Administrator'}}
       <div class="row mt-5">
         <div class="col-lg-3 mb-5">

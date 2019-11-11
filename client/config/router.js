@@ -67,3 +67,8 @@ Router.route('/Profile', function () {
     this.render('profile');
     this.layout('mainLayout');
 });
+
+Router.route('/fusioncharts', function () {
+    this.render('fusioncharts');
+    this.layout('mainLayout');
+});
