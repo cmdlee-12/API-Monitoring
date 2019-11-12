@@ -12,3 +12,10 @@ Template.navigation.events({
     //     console.log("hello");
     // }
 });
+
+// sidebarCollapse();
+// function sidebarCollapse (){
+//     $('#sidebarCollapse').click(function(){
+//         $('#sidebar').toggleClass('active');
+//     })
+// }
