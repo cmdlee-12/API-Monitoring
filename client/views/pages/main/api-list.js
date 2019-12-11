@@ -194,9 +194,9 @@ Template.apiList.events({
       var authentication = document.getElementById('authorization').value;
       var b = document.getElementById("addingFrequency");
       var frequency = b.options[b.selectedIndex].text;
-      var propertyID = this.propertyID;
-
-      Meteor.call("updateApi", apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, function (error, result) {
+      var propertyID = Router.current().params.id;
+      var isProperty = "0";
+      Meteor.call("updateApi", apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
         if (apiName === "") {
           toastr.error("API Name field is required", 'Error');
         }
@@ -237,8 +237,7 @@ Template.apiList.events({
 
     //set data target of edit btn
     $("#editPropertyDetails").attr("data-target", ".editProperty-" + propertyID)
-    // // set api link
-    // $("#apiLink").attr("href", "apis/" + propertyID);
+
     // set run btn value
     $("#btn-property").val(propertyID);
 
@@ -252,8 +251,12 @@ Template.apiList.events({
 
       try {
         final.push({
-          updatedTime: apiAddress1[i].updatedTime
+          updatedTime: apiAddress1[i].updatedTime,
+          propertyName: apiAddress1[i].propertyName
         })
+
+        //set form values
+        $("#propertyName-" + propertyID).val(final[i].propertyName);
 
         this.canvas = document.getElementById('statusChart');
         this.ctx = this.canvas.getContext('2d');
@@ -393,99 +396,27 @@ Template.apiList.events({
 });
 
 Template.apiList.helpers({
-  apiIndex: function(){
-    var apiAddress1 = apiAddress.find({
-      propertyID: this.propertyID
-    }).fetch();
-    
+  currentPropertyName: function (){
+    var propertyID = Router.current().params.id;
+    var properties = Properties.find({_id:propertyID}).fetch();
+    var nameArr = [];
+    for(var i = 0; i < properties.length; i++){
+      nameArr.push({
+        propertyName: properties[i].propertyName
+      })
+    }
+    return nameArr[0].propertyName;
+  },
+  currentPropertyID: function () {
+    return Router.current().params.id;
+  },
+  apiIndex: function () {
     return apiIndex;
   },
   inputAttributes: () => {
     return {
       placeholder: 'Search'
     }
-  },
-  'properties': function () {
-    var userProperties = Properties.find({
-      propertyID: this._id
-    }).fetch();
-    var result = [];
-    for (var i = 0; i < userProperties.length; i++) {
-      if (userProperties[i].updatedTime) {
-        result.push({
-          _id: userProperties[i]._id,
-          createdBy: userProperties[i].createdBy,
-          propertyName: userProperties[i].propertyName,
-          propertyURL: userProperties[i].propertyURL,
-          lastRun: userProperties[i].lastRun,
-          status: userProperties[i].status,
-          uptime: userProperties[i].uptime,
-          downtime: userProperties[i].downtime,
-          pageSpeed: userProperties[i].pageSpeed
-
-        })
-      } else {
-        result.push({
-          _id: userProperties[i]._id,
-          createdBy: userProperties[i].createdBy,
-          propertyName: userProperties[i].propertyName,
-          propertyURL: userProperties[i].propertyURL,
-          lastRun: userProperties[i].lastRun,
-          status: userProperties[i].status,
-          uptime: userProperties[i].uptime,
-          downtime: userProperties[i].downtime,
-          pageSpeed: userProperties[i].pageSpeed
-        })
-      }
-    }
-    return result;
-  },
-  api: function () {
-    var apiAddress1 = apiAddress.find({
-      propertyID: this.propertyID
-    }).fetch();
-    var final = [];
-
-    for (var i = 0; i < apiAddress1.length; i++) {
-      if (apiAddress1[i].updatedTime && apiAddress1[i].isProperty == "0") {
-        final.push({
-          _id: apiAddress1[i]._id,
-          createdByName: apiAddress1[i].createdByName,
-          createdBy: apiAddress1[i].createdBy,
-          apiName: apiAddress1[i].apiName,
-          apiAddress: apiAddress1[i].apiAddress,
-          getOrPost: apiAddress1[i].getOrPost,
-          usageOrStatus: apiAddress1[i].usageOrStatus,
-          path: apiAddress1[i].path,
-          response: (JSON.stringify(apiAddress1[i].response, null, 4)),
-          header: (JSON.stringify(apiAddress1[i].headers, null, 4)),
-          status: apiAddress1[i].status,
-          frequency: apiAddress1[i].frequency,
-          updatedTime: apiAddress1[i].updatedTime,
-          responseTime: apiAddress1[i].responseTime,
-          statusRecord: apiAddress1[i].statusRecord,
-          propertyID: apiAddress1[i].propertyID
-        })
-      } else if (apiAddress1[i].isProperty == "0") {
-        final.push({
-          _id: apiAddress1[i]._id,
-          apiName: apiAddress1[i].apiName,
-          apiAddress: apiAddress1[i].apiAddress,
-          getOrPost: apiAddress1[i].getOrPost,
-          usageOrStatus: apiAddress1[i].usageOrStatus,
-          path: apiAddress1[i].path,
-          response: (JSON.stringify(apiAddress1[i].response, null, 4)),
-          header: (JSON.stringify(apiAddress1[i].headers, null, 4)),
-          status: apiAddress1[i].status,
-          frequency: apiAddress1[i].frequency,
-          responseTime: apiAddress1[i].responseTime,
-          statusRecord: apiAddress1[i].statusRecord,
-          propertyID: apiAddress1[i].propertyID
-        })
-      }
-
-    }
-    return final;
   },
   loading: function () {
     if (addingApiSearch.find({}).count() > 0) {

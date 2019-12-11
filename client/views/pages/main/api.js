@@ -366,7 +366,6 @@ Template.api.events({
       .addProps('status', $(e.target).val());
   }
 });
-
 Template.api.helpers({
   apiIndex: () => apiIndex,
   inputAttributes: () => {
