@@ -56,4 +56,3 @@ Template.mainLayout.rendered = function () {
 
 
 };
-

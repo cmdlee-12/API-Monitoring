@@ -5,9 +5,11 @@ Template.loggedOut.events({
     var password = $('[name=password]').val();
     Meteor.loginWithPassword(email, password, function (error) {
       if (error) {
-        sAlert.error(error.reason, { effect: 'scale', position: 'bottom', timeout: '2000', onRouteClose: false, stack: false, offset: '0px' });
-
-        console.log(error.reason);
+        Swal.fire({
+          type: 'error',
+          title: 'Oops...',
+          text: error.reason
+        })
       } else {
         Router.go("/dashboard");
       }

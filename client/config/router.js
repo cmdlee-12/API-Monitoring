@@ -1,5 +1,4 @@
 var PostSubs = new SubsManager({
-
     // maximum number of cache subscriptions
     cacheLimit: 20,
     // any subscription will be expire after 5 minute, if it's not subscribed again
@@ -22,19 +21,10 @@ Router.route('/', function () {
     }
 
 });
+
 Router.route('/login', function () {
     this.render('login');
     this.layout('blankLayout');
-
-});
-
-Router.route('/forgotPassword', function () {
-    this.render('forgotPassword');
-
-});
-
-Router.route('/resetPassword', function () {
-    this.render('resetPassword');
 
 });
 
@@ -51,6 +41,7 @@ Router.route('/register', function () {
 
 Router.route('/notFound', function () {
     this.render('notFound');
+    this.layout('blankLayout');
 });
 
 Router.route('/Clients', function () {
@@ -60,15 +51,15 @@ Router.route('/Clients', function () {
 
 Router.route('/Api', function () {
     this.render('api');
+
+});
+
+Router.route('/Starred', function () {
+    this.render('starred');
     this.layout('mainLayout');
 });
 
 Router.route('/Profile', function () {
     this.render('profile');
-    this.layout('mainLayout');
-});
-
-Router.route('/fusioncharts', function () {
-    this.render('fusioncharts');
     this.layout('mainLayout');
 });

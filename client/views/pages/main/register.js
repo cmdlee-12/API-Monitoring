@@ -5,30 +5,34 @@ Template.register.events({
     var username = $('[name=name]').val();
     var email = $('[name=email]').val();
     var password = $('[name=password]').val();
-    var url = $('[name=url]').val();
     var role = "Client";
+    
     Accounts.createUser({
       username: username,
       email: email,
       password: password,
       profile: {
-        role: role,
-        url: url
+        role: role
+        // captcha: captchaData
       }
     }, function (error) {
       if (error) {
-        //console.log(error.reason); // Output error if registration fails
-        sAlert.error(error.reason, {
-          effect: 'scale',
-          position: 'bottom',
-          timeout: '2000',
-          onRouteClose: false,
-          stack: false,
-          offset: '0px'
-        });
-      } else {
-        Router.go("/login"); // Redirect user if registration succeeds
+        Swal.fire({
+          type: 'error',
+          title: 'Oops...',
+          text: error.reason
+        })
+      }else {
+        Swal.fire(
+          'Good job!',
+          'You have successfully registered your account!',
+          'success'
+        )
+        setTimeout(function () {
+          Router.go("/dashboard"); // Redirect user if registration succeeds
+        }, 1500);
       }
     });
   }
 });
+

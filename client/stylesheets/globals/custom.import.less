@@ -1,6 +1,279 @@
-/* Only demo */
-@media (max-width: 1000px) {
-  .welcome-message {
-    display: none;
-  }
+// Login
+.wrapper-login {
+  display: inline-grid;
+  grid-template-columns: 50% 50%;
+  height: 100vh;
+  width: 100%;
+}
+
+.wrapper-login__img {
+  background: rgb(234, 238, 250);
+}
+
+.wrapper-login .container::before,
+.wrapper-login .row::before {
+  display: block;
+}
+
+.form-group.has-search {
+  position: relative;
+}
+
+.has-search .form-control {
+  padding-left: 2.375rem;
+  font-family: 'Montserrat', serif;
+  font-size: 16px;
+}
+
+.has-search .form-control-feedback {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 3.375rem;
+  height: 2.375rem;
+  line-height: 2.375rem;
+  pointer-events: none;
+  color: #aaa;
+  left: 0;
+  padding-left: 17px;
+  top: 6px;
+}
+
+.user-wrapper {
+  background: rgb(236, 240, 252);
+  border-radius: 15px;
+}
+
+
+.user-wrapper p {
+  max-width: 500px;
+}
+
+.blue-text {
+  color: rgb(63, 72, 167);
+}
+
+.black-text {
+  color: #000;
+  font-weight: 400;
+}
+
+.connection-col {
+  max-height: 500px;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.connection-col,
+.table-col {
+  background: #f9f9fb;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.card-wrapper {
+  background: rgb(61, 88, 242);
+  border-radius: 5px;
+  color: #fff;
+  padding: 15px;
+}
+
+.card-dark-blue {
+  background: rgb(38, 47, 78);
+
+}
+
+.card-light-blue {
+  background: rgb(61, 88, 242);
+}
+
+.card-violet {
+  background: rgb(82, 106, 242);
+}
+
+.card-pink {
+  background: #7E84E4;
+}
+
+.card-body-icon {
+  position: absolute;
+  z-index: 0;
+  top: -1.25rem;
+  right: -1rem;
+  opacity: 0.4;
+  font-size: 5rem;
+  -webkit-transform: rotate(15deg);
+  transform: rotate(15deg);
+}
+
+.card-wrapper button,
+.card-wrapper a {
+  color: #fff;
+}
+
+.wrapper .btn:hover {
+  background: transparent;
+  border: 1px solid #3f48a7;
+  color: #3f48a7;
+}
+
+.detail-title {
+  font-weight: 500;
+}
+
+.wrapper .panel {
+  background: transparent;
+}
+
+.wrapper .btn-red {
+  background: rgb(242, 68, 5);
+  color: #fff;
+}
+
+#button {
+  background: #ecf0fc;
+  border-color: #ecf0fc;
+  color: #737373;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.company-title {
+  color: #2d2d2d;
+  font-weight: 700;
+}
+
+.company-sub {
+  color: #2d2d2d;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+span.num {
+  font-size: 20px;
+  font-weight: 700;
+  /* color: rgb(38, 47, 78); */
+}
+
+span.num-title {
+  margin-left: 3px;
+  font-size: 11px;
+}
+
+.good-connection,
+.green-dot {
+  color: #28a745;
+  font-size: 15px;
+}
+
+.card-bad {
+  background: #dc3545;
+}
+
+.card-good {
+  background: #28a745;
+}
+
+.failed-connection,
+.red-dot,
+.action-remove {
+  color: #dc3545;
+  font-size: 15px;
+}
+
+.action-edit {
+  color: #737373;
+  margin: 0px 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.action-remove {
+  margin: 0px 10px;
+  cursor: pointer;
+}
+
+.connection-wrapper p {
+  font-size: 12px;
+}
+
+// scroll bar
+
+body::-webkit-scrollbar {
+  width: 1em;
+}
+
+body::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+.data-wrapper__col pre {
+  height: 400px;
+  overflow: auto;
+}
+
+.remove-backdrop {
+  opacity: 0 !important;
+}
+
+.updown-chart {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.property-card span {
+  display: flex;
+  justify-content: center;
+}
+
+.property-card canvas {
+  display: block;
+  margin: 0 auto;
+  width: 100px !important;
+  height: 100px !important;
+}
+
+.property-card .updown-chart {
+  display: block;
+  margin: 0 auto;
+  height: 100px !important;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show>.nav-link,
+.nav-pills>li.active>a,
+.nav-pills>li.active>a:hover,
+.nav-pills>li.active>a:focus,
+.nav>li>a:hover,
+.nav>li>a:focus {
+  color: #007BFF !important;
+  background-color: #fff !important;
+}
+.white {
+  background-color: rgb(243, 243, 247);
+  border-radius: 10px;
+  padding-left: 5% !important;
+  padding-right: 5% !important;
+  padding-top: 5%;
+  padding-bottom: 0;
+}
+.white-- {
+  background-color: rgb(243, 243, 247);
+  border-radius: 10px;
+  padding-left: 5% !important;
+  padding-right: 5% !important;
+  padding-top: 5%;
+  padding-bottom: 5%;
+}
+.image--cover {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center right;
 }

@@ -1,34 +1,35 @@
 <template name="navigation">
-    
-        <nav id="sidebar">
-                <div class="row text-center my-5">
-                    <div class="col-lg-12">
-                        <div class="sidebar-header">
-                            <img src="logo_dashboard.png" alt="techstack_logo" class="img-fluid">
-                        </div>
-                    </div>
+    <nav id="sidebar">
+        <div class="row text-center my-5">
+            <div class="col-lg-12">
+                <div class="sidebar-header">
+                    <a href="/dashboard"><img src="/logo/logo_52x52.png" alt="techstack_logo" class="img-fluid"></a>
                 </div>
+            </div>
+        </div>
+        <div class="row text-center my-5">
+            <div class="col-lg-12">
+                <a href="#"><img src="/nav-icons/notif.png" alt="bell" class="img-fluid"></a>
                 <ul class="list-unstyled components">
                     <li>
-                        <a href="/dashboard"><i class="fas fa-home"></i> Home</a>
+                        <a href="/"><img src="/nav-icons/search.png" alt="search" class="img-fluid"></a>
                     </li>
                     {{#if $eq currentUser.profile.role 'Administrator'}}
                     <li>
-                        <a href="/clients"><i class="fas fa-building"></i> Clients</a>
+                        <a href="/dashboard"><img src="/nav-icons/home.png" alt="home" class="img-fluid"></a>
                     </li>
                     {{/if}}
                     <li>
-                        <a href="/api"><i class="fas fa-cog"></i> Api</a>
+                        <a href="/dashboard"><img src="/nav-icons/home.png" alt="home" class="img-fluid"></a>
                     </li>
-                    {{#if currentUser}}
                     <li>
-                        <a href="/signout"><i class="fas fa-sign-out-alt"></i> Signout</a>
+                        <a href="/dashboard"><img src="/nav-icons/question.png" alt="question" class="img-fluid"></a>
                     </li>
-                    {{else}}
                     <li>
-                        <a href="/"><i class="fas fa-sign-out-alt"></i> Login</a>
+                        <a href="/signout"><img src="/nav-icons/profile.png" alt="profile" class="img-fluid"></a>
                     </li>
-                    {{/if}}
                 </ul>
-            </nav>
+            </div>
+        </div>
+    </nav>
 </template>

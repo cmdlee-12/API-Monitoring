@@ -2,7 +2,7 @@ import '../lib/collections.js'
 import {
   SSR,
   Template
-} from 'meteor/meteorhacks:ssr';  
+} from 'meteor/meteorhacks:ssr';
 
 var moment = Npm.require('moment');
 var slackBot = Npm.require('slack-bot')(Meteor.settings.private.webhookUrl);
@@ -39,6 +39,7 @@ Meteor.users.allow({
 })
 
 Meteor.startup(() => {
+
   // code to run on server at startup
   process.env.MAIL_URL = "smtp://apikey:yourApiKey:587"; //only change 'yourApiKey' and the port(if required)
 
@@ -96,55 +97,159 @@ Meteor.startup(() => {
 });
 
 Meteor.methods({
-  // 'generate_pdf': function(){
-  //   var fs = Npm.require('fs');
-  //   var Future = Npm.require('fibers/future');
-  //   var fut = new Future();
-  //   var fileName = "pokemon-report.pdf";
+  'getLastRun': function (id, url) {
+    var apiAddress1 = apiAddress.find({
+      propertyID: id
+    }).fetch();
 
-  //   SSR.compileTemplate('agreement', Assets.getText('api.html'));
-  //   var html_string = SSR.render('agreement');
+    var final = [];
+    for (var i = 0; i < apiAddress1.length; i++) {
+      final.push({
+        updatedTime: apiAddress1[i].updatedTime
+      })
+    }
 
-  //   var options = {
-  //         "paperSize": {
-  //             "format": "Letter",
-  //             "orientation": "portrait",
-  //             "margin": "1cm"
-  //         },
-  //         siteType: 'html'
-  //   };
-
-  //     webshot(html_string, fileName, options, function(err) {
-  //         fs.readFile(fileName, function (err, data) {
-  //             if (err) {
-  //                 return console.log(err);
-  //             }
-  //             fs.unlinkSync(fileName);
-  //             fut.return(data);
-  //         });
-  //     });
-
-  //     let pdfData = fut.wait();
-  //     let base64String = new Buffer(pdfData).toString('base64');
-
-  //     return base64String;
-  // },
-  'addProperties': function (name, url) {
-    var currentUser = Meteor.userId();
-      Properties.insert({
-        createdBy: currentUser,
-        propertyName: name,
-        propertyURL: url
-      });
+    Properties.update({
+      _id: id
+    }, {
+      $set: {
+        lastRun: final[0].updatedTime
+      }
+    })
   },
-  'updateApi': function (name, address, getOrPost, usageOrStatus, authentication, frequency) {
+  'getStatus': function (id) {
+    var apiAddress1 = apiAddress.find({
+      propertyID: id
+    }).fetch();
+    var final = [];
+    for (var x = 0; x < apiAddress1.length; x++) {
+      final.push({
+        responseTime: apiAddress1[x].responseTime
+      })
+    }
+    if (final[0].responseTime == "FAIL") {
+      Properties.update({
+        _id: id
+      }, {
+        $set: {
+          status: "Down"
+        }
+      })
+    } else {
+      Properties.update({
+        _id: id
+      }, {
+        $set: {
+          status: "Up"
+        }
+      })
+    }
+
+  },
+  'getPageSpeed': function (id, response) {
+    if (response == "Site Not Found") {
+      Properties.update({
+        _id: id
+      }, {
+        $set: {
+          pageSpeed: response
+        }
+      })
+    } else {
+      Properties.update({
+        _id: id
+      }, {
+        $set: {
+          pageSpeed: response + "%"
+        }
+      })
+    }
+  },
+  'getUpDownTime': function (id) {
+    var downTime = [];
+
+    var apiAddress1 = apiAddress.find({
+      propertyID: id
+    }).fetch();
+
+    for (var i = 0; i < apiAddress1.length; i++) {
+      for (var j = 0; j < apiAddress1[i].statusRecord.length; j++) {
+        if (apiAddress1[i].statusRecord[j].responseTime == 0) {
+          downTime.push(apiAddress1[i].statusRecord[j].time);
+        }
+      }
+    }
+
+    if (downTime.length == 0) {
+      Properties.update({
+        _id: id
+      }, {
+        $set: {
+          uptime: 100,
+          downtime: 0
+        }
+      })
+    } else {
+
+      var diff = new Date("1970-1-1 " + downTime[downTime.length - 1]) - new Date("1970-1-1 " + downTime[0]);
+      var seconds = Math.floor(diff / 1000);
+      var minutes = Math.floor(seconds / 60);
+      seconds = seconds % 60;
+      var hours = Math.floor(minutes / 60);
+      minutes = minutes % 60;
+      var finalDowntime = ((((minutes * 60) + seconds) / 86400) * 100).toFixed(2);
+      var finalUptime = (100 - finalDowntime).toFixed(2);
+
+      Properties.update({
+        _id: id
+      }, {
+        $set: {
+          uptime: finalUptime,
+          downtime: finalDowntime
+        }
+      })
+    }
+  },
+  'updateProperty': function (id, name, url, isStarred) {
+    Properties.update({
+      _id: id
+    }, {
+      $set: {
+        propertyName: name,
+        propertyURL: url,
+        isStarred: isStarred
+      }
+    })
+  },
+  'addProperties': function (name, url, isStarred) {
+    var currentUser = Meteor.userId();
+    Properties.insert({
+      createdBy: currentUser,
+      propertyName: name,
+      propertyURL: url,
+      isStarred: isStarred
+    });
+  },
+  'updateApi': function (name, address, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty) {
     console.dir(address);
     console.dir(authentication);
     var currentUser = Meteor.userId();
     var username = Meteor.users.findOne({
       _id: currentUser
     }).username;
-    console.log(currentUser);
+
+    var propertyName = [];
+    var property = Properties.find({
+      _id: propertyID
+    }).fetch();
+
+    for (var i = 0; i < property.length; i++) {
+      propertyName.push({
+        name: property[i].propertyName,
+        url: property[i].propertyURL
+      })
+    }
+
     if (apiAddress.find({
         createdBy: currentUser,
         apiAddress: address
@@ -180,7 +285,11 @@ Meteor.methods({
                 headers: res.headers,
                 status: "pass",
                 frequency: frequency,
-                responseTime: responseTime
+                responseTime: responseTime,
+                propertyID: propertyID,
+                propertyName: propertyName[0].name,
+                propertyURL: propertyName[0].url,
+                isProperty: isProperty
               });
 
             } catch (err) {
@@ -197,7 +306,11 @@ Meteor.methods({
                 headers: res.headers,
                 status: "pass",
                 frequency: frequency,
-                responseTime: responseTime
+                responseTime: responseTime,
+                propertyID: propertyID,
+                propertyName: propertyName[0].name,
+                propertyURL: propertyName[0].url,
+                isProperty: isProperty
               });
             }
           } else {
@@ -218,7 +331,10 @@ Meteor.methods({
                 headers: res.headers,
                 status: "pass",
                 frequency: frequency,
-                responseTime: responseTime
+                responseTime: responseTime,
+                propertyID: propertyID,
+                propertyName: propertyName[0].name,
+                isProperty: isProperty
               });
 
             } catch (err) {
@@ -234,7 +350,10 @@ Meteor.methods({
                 headers: res.headers,
                 status: "pass",
                 frequency: frequency,
-                responseTime: responseTime
+                responseTime: responseTime,
+                propertyID: propertyID,
+                propertyName: propertyName[0].name,
+                isProperty: isProperty
               });
             }
           }
@@ -304,15 +423,35 @@ Meteor.methods({
     }
 
   },
-
+  'updatePropertyAPI': function (id, name) {
+    apiAddress.update({
+      _id: id
+    }, {
+      $set: {
+        apiName: name,
+      }
+    })
+  },
+  'getLastRunAPI': function (id) {
+    var apiAddress1 = apiAddress.find({
+      _id: id
+    }).fetch();
+    var final = [];
+    for (var i = 0; i < apiAddress1.length; i++) {
+      final.push({
+        updatedTime: apiAddress1[i].updatedTime
+      })
+    }
+    apiAddress.update({
+      _id: id
+    }, {
+      $set: {
+        updatedTime: final[0].updatedTime
+      }
+    })
+  },
   'updateProfile': function (companyName, companyEmail, websiteURL, newPassword, oldPassword) {
     var id = Meteor.userId();
-    // var checked = Accounts._checkPassword(id, oldPassword);
-    // console.log(checked);
-
-    // var currentPW = Meteor.users.findOne({
-    //   _id: id
-    // }).services.password.bcrypt;
 
     Meteor.users.update({
       _id: id
@@ -323,11 +462,6 @@ Meteor.methods({
         "emails.0.address": companyEmail
       }
     });
-
-    // Accounts._checkPassword(id, oldPassword)
-    // Accounts.setPassword(id, newPassword, {
-    //   logout: false
-    // })
   },
 
   'removeApi': function (id) {
@@ -463,7 +597,29 @@ Meteor.methods({
       }
     });
   },
-
+  'changeFreqencyProperty': function (frequency, id) {
+    console.dir("Changing frequncy");
+    console.log("Changing frequncy");
+    var currentUser = Meteor.userId();
+    SyncedCron.remove(id);
+    apiAddress.update({
+      propertyID: id,
+      createdBy: currentUser
+    }, {
+      $set: {
+        frequency: frequency
+      }
+    });
+    Meteor.call("apiRefresher", frequency, id);
+    FutureTasks.update({
+      createdBy: currentUser,
+      apiId: id
+    }, {
+      $set: {
+        frequency: frequency
+      }
+    });
+  },
   'apiRefresher': function (frequency, apiId) {
     console.dir("Adding api for status checks");
     var currentUser = Meteor.userId();
