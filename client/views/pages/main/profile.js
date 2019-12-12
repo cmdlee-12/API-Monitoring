@@ -1,22 +1,34 @@
 Template.profile.onRendered(function () {
-    var currentUser = Meteor.userId();
-    var userDetails = Meteor.users.find({
-        _id: currentUser
-    }).fetch();
-    var result = [];
-    for (var i = 0; i < userDetails.length; i++) {
-        result.push({
-            _id: userDetails[i]._id,
-            email: userDetails[i].emails[0].address,
-            phone: userDetails[i].profile.phone,
-            country: userDetails[i].profile.country,
-            firstName: userDetails[i].profile.firstName,
-            lastName: userDetails[i].profile.lastName,
-            title: userDetails[i].profile.title
+
+    sideBar();
+    setInputValues();
+    
+    function sideBar() {
+        $('.sidebar-toggle img').click(function () {
+            $('.content-side__wrapper').toggle();
         })
     }
-    $("#title").val(result[0].title);
-    $("#country").val(result[0].country);
+
+    function setInputValues() {
+        var currentUser = Meteor.userId();
+        var userDetails = Meteor.users.find({
+            _id: currentUser
+        }).fetch();
+        var result = [];
+        for (var i = 0; i < userDetails.length; i++) {
+            result.push({
+                _id: userDetails[i]._id,
+                email: userDetails[i].emails[0].address,
+                phone: userDetails[i].profile.phone,
+                country: userDetails[i].profile.country,
+                firstName: userDetails[i].profile.firstName,
+                lastName: userDetails[i].profile.lastName,
+                title: userDetails[i].profile.title
+            })
+        }
+        $("#title").val(result[0].title);
+        $("#country").val(result[0].country);
+    }
 });
 
 Template.profile.events({
