@@ -41,7 +41,7 @@ Meteor.users.allow({
 Meteor.startup(() => {
 
   // code to run on server at startup
-  process.env.MAIL_URL = "smtp://apikey:yourApiKey:587"; //only change 'yourApiKey' and the port(if required)
+  process.env.MAIL_URL = "smtp://apikey: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:465"; //only change 'yourApiKey' and the port(if required)
 
   FutureTasks.find().forEach(function (task) {
     Meteor.call("addStatusCheck", task.apiId, task.frequency, task.createdBy);
@@ -450,20 +450,25 @@ Meteor.methods({
       }
     })
   },
-  'updateProfile': function (companyName, companyEmail, websiteURL, newPassword, oldPassword) {
-    var id = Meteor.userId();
-
+  'updateProfile': function (user_id, title, firstName, lastName, email, phone, country) {
+    var user_title_name = title+" "+firstName+" "+lastName;
     Meteor.users.update({
-      _id: id
+      _id: user_id
     }, {
       $set: {
-        username: companyName,
-        "profile.url": websiteURL,
-        "emails.0.address": companyEmail
+        username: user_title_name,
+        "profile.title":title,
+        "profile.firstName":firstName,
+        "profile.lastName":lastName,
+        "profile.phone": phone,
+        "profile.country":country,
+        "emails.0.address": email
       }
     });
   },
-
+  'checkPassword': function (id, oldPassword){
+    Accounts._checkPassword(id, oldPassword);
+  },
   'removeApi': function (id) {
     apiAddress.remove({
       _id: id
@@ -785,7 +790,7 @@ Meteor.methods({
           _id: currentUser
         }).emails[0].address;
 
-        // Meteor.call("sendErrorEmail", error, userEmail);
+        Meteor.call("sendErrorEmail", error, userEmail);
         // Meteor.call("postToSlack", "The following API failed at " + postingTime + ": " + error);
       }
     } else {

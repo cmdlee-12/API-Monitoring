@@ -7,7 +7,7 @@
                         <img src="https://scontent.fmnl4-4.fna.fbcdn.net/v/t1.0-1/c0.0.240.240a/p240x240/64707299_10156727111261137_7378243830111272960_n.jpg?_nc_cat=102&_nc_ohc=Sz3_TKFepXkAQmAEjx1jRex_g8fer2ds6_AMDjQPsdIrB-ZDI6Lh1_RsQ&_nc_ht=scontent.fmnl4-4.fna&oh=982bcec3f9d0ba2efef7fd3f712fbe81&oe=5E6A8845"
                             class="figure-img mx-auto d-block image--cover" alt="Profile Picture">
                     </div>
-                    <h2 class="text-center py-5"><b>Lora Sebastian</b></h2>
+                    <h2 class="text-center py-5"><b>{{currentUser.username}}</b></h2>
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="pills-overview-tab" data-toggle="pill" href="#pills-overview"
@@ -20,46 +20,44 @@
                     </ul>
                 </div>
                 <div class="col-12 mt-5 white--">
+                    {{#each user}}
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane active" id="pills-overview" role="tabpanel"
                             aria-labelledby="pills-overview-tab">
                             <h3><b>Overview</b></h3>
-                            <form>
+                            <form action="">
                                 <div class="form-group pt-5">
-                                    <label for="title">Title</label><span
-                                        style="color: red !important; display: inline; float: none;">*</span>
-                                    <input type="text" id="title" name="title" class="form-control"
-                                        placeholder="Add a title" required>
+                                    <label for="title">Title</label>
+                                    <select name="title" id="title" class="form-control">
+                                        <option value="Ms.">Ms.</option>
+                                        <option value="Mrs.">Mrs.</option>
+                                        <option value="Mr.">Mr.</option>
+                                    </select>
                                 </div>
                                 <div class="form-row pt-5" style="margin-bottom: 1rem;">
                                     <div class="col">
-                                        <label for="firstName">First Name</label><span
-                                            style="color: red !important; display: inline; float: none;">*</span>
+                                        <label for="firstName">First Name</label>
                                         <input type="text" id="firstName" name="firstName" class="form-control"
-                                            placeholder="Enter your first name" required>
+                                            placeholder="Enter your first name" value="{{firstName}}">
                                     </div>
                                     <div class="col">
-                                        <label for="lastName">Last Name</label><span
-                                            style="color: red !important; display: inline; float: none;">*</span>
+                                        <label for="lastName">Last Name</label>
                                         <input type="text" id="lastName" name="lastName" class="form-control"
-                                            placeholder="Enter your last name" required>
+                                            placeholder="Enter your last name" value="{{lastName}}">
                                     </div>
                                 </div>
                                 <div class="form-group pt-5">
-                                    <label for="email">Email</label><span
-                                        style="color: red !important; display: inline; float: none;">*</span>
+                                    <label for="email">Email</label><span class="form-required">*</span>
                                     <input type="email" id="email" name="email" class="form-control"
-                                        placeholder="Add an email address" required>
+                                        placeholder="Add an email address" required value="{{email}}">
                                 </div>
                                 <div class="form-group pt-5">
-                                    <label for="number">Phone</label><span
-                                        style="color: red !important; display: inline; float: none;">*</span>
+                                    <label for="number">Phone</label>
                                     <input type="number" id="number" name="number" class="form-control"
-                                        placeholder="Add a phone number" required>
+                                        placeholder="Add a phone number" value="{{phone}}">
                                 </div>
                                 <div class="form-group pt-5">
-                                    <label for="country">Country</label><span
-                                        style="color: red !important; display: inline; float: none;">*</span>
+                                    <label for="country">Country</label><span class="form-required">*</span>
                                     <select id="country" name="country" class="form-control">
                                         <option value="Afghanistan">Afghanistan</option>
                                         <option value="Åland Islands">Åland Islands</option>
@@ -320,45 +318,46 @@
                                         <option value="Zimbabwe">Zimbabwe</option>
                                     </select>
                                 </div>
-                                <button type="submit" class="btn btn-outline-primary mt-5">Submit</button>
+                                <button id="btn-profile-submit" value="{{currentUser._id}}"
+                                    class="btn btn-outline-primary mt-5">Submit</button>
                             </form>
                         </div>
                         <div class="tab-pane" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab">
                             <h3><b>Change Your Password</b></h3>
-                            <form action="">
-                                <label for="inputCurrentPassword" class="pt-5">Current Password</label><span
-                                    style="color: red !important; display: inline; float: none;">*</span>
-                                <input type="password" id="inputCurrentPassword" name="inputCurrentPassword"
-                                    class="form-control" aria-describedby="passwordHelpBlock" required>
-                                <small id="passwordHelpBlock" class="form-text text-muted">
-                                    Your password must be 8-20 characters long, contain letters and numbers, and must
-                                    not
-                                    contain spaces, special characters, or emoji.
-                                </small>
+                            <label for="inputCurrentPassword" class="pt-5">Current Password</label><span
+                                class="form-required">*</span>
+                            <input type="password" id="inputCurrentPassword" name="inputCurrentPassword"
+                                class="form-control" aria-describedby="passwordHelpBlock" required>
+                            <small id="passwordHelpBlock" class="form-text text-muted">
+                                Your password must be 8-20 characters long, contain letters and numbers, and must
+                                not
+                                contain spaces, special characters, or emoji.
+                            </small>
 
-                                <label for="inputNewPassword" class="pt-5">New Password</label><span
-                                    style="color: red !important; display: inline; float: none;">*</span>
-                                <input type="password" id="inputNewPassword" name="inputNewPassword"
-                                    class="form-control" aria-describedby="passwordHelpBlock" required>
-                                <small id="passwordHelpBlock" class="form-text text-muted">
-                                    Your password must be 8-20 characters long, contain letters and numbers, and must
-                                    not
-                                    contain spaces, special characters, or emoji.
-                                </small>
+                            <label for="inputNewPassword" class="pt-5">New Password</label><span
+                                class="form-required">*</span>
+                            <input type="password" id="inputNewPassword" name="inputNewPassword" class="form-control"
+                                aria-describedby="passwordHelpBlock" required>
+                            <small id="passwordHelpBlock" class="form-text text-muted">
+                                Your password must be 8-20 characters long, contain letters and numbers, and must
+                                not
+                                contain spaces, special characters, or emoji.
+                            </small>
 
-                                <label for="inputConfirmPassword" class="pt-5">Confirm New Password</label><span
-                                    style="color: red !important; display: inline; float: none;">*</span>
-                                <input type="password" id="inputConfirmPassword" name="inputConfirmPassword"
-                                    class="form-control" aria-describedby="passwordHelpBlock" required>
-                                <small id="passwordHelpBlock" class="form-text text-muted">
-                                    Your password must be 8-20 characters long, contain letters and numbers, and must
-                                    not
-                                    contain spaces, special characters, or emoji.
-                                </small>
-                                <button type="submit" class="btn btn-outline-primary mt-5">Submit</button>
-                            </form>
+                            <label for="inputConfirmPassword" class="pt-5">Confirm New Password</label><span
+                                class="form-required">*</span>
+                            <input type="password" id="inputConfirmPassword" name="inputConfirmPassword"
+                                class="form-control" aria-describedby="passwordHelpBlock" required>
+                            <small id="passwordHelpBlock" class="form-text text-muted">
+                                Your password must be 8-20 characters long, contain letters and numbers, and must
+                                not
+                                contain spaces, special characters, or emoji.
+                            </small>
+                            <button type="submit" id="btn-password-submit" class="btn btn-outline-primary mt-5"
+                                value="{{currentUser._id}}">Submit</button>
                         </div>
                     </div>
+                    {{/each}}
                 </div>
             </div>
         </div>
