@@ -234,7 +234,7 @@ Template.apiList.events({
       document.getElementById("mySidenav").style.width = "0";
     }
 
-
+    
     //set data target of edit btn
     $("#editPropertyDetails").attr("data-target", ".editProperty-" + propertyID)
 

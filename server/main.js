@@ -466,9 +466,6 @@ Meteor.methods({
       }
     });
   },
-  'checkPassword': function (id, oldPassword){
-    Accounts._checkPassword(id, oldPassword);
-  },
   'removeApi': function (id) {
     apiAddress.remove({
       _id: id

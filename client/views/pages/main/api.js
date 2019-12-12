@@ -205,6 +205,9 @@ Template.api.events({
       document.getElementById("mySidenav").style.width = "0";
     }
 
+    //SET MODAL VALUES
+    $("#apiView").attr("data-target",".view-"+propertyID);
+    $("#editPropertyDetails").attr("data-target", ".editProperty-"+propertyID);
     console.log(propertyID)
     //set last run, performance values
     var apiAddress1 = apiAddress.find({
@@ -219,7 +222,7 @@ Template.api.events({
           updatedTime: apiAddress1[i].updatedTime,
           apiName: apiAddress1[i].apiName
         })
-
+        
         //sets edit api field value
         this.canvas = document.getElementById('statusChart');
         this.ctx = this.canvas.getContext('2d');
