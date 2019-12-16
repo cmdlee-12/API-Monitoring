@@ -53,3 +53,7 @@ Meteor.publish("properties", function () {
     createdBy: this.userId
   });
 });
+
+Meteor.publish("upDownTimeChart", function () {
+  return Properties.find({});
+});

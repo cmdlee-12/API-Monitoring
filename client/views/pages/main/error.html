@@ -1,0 +1,67 @@
+<template name="error">
+    <div class="wrapper wrapper-content" id="main">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 col-md-12 col-sm-12 content-body__wrapper">
+                    <div class="row align-items-center px-5 py-3">
+                        <div class="col-lg-6">
+                            <h1 class="title">ERROR REPORT</h1>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row justify-content-end">
+                                <div class="input-group col-lg-6 search-wrapper">
+                                    {{> EasySearch.Input index=apiIndex attributes=inputAttributes}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center px-5 py-5">
+                        <div class="col-lg-6">
+                            <div class="row align-items-center">
+                                <div class="col-lg-3">
+                                    <button class="btn button-light"><img src="/icons/filter.png" class="img-flui"
+                                            alt="filter">
+                                        Filter</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Properties -->
+                    {{#if $eq currentUser.profile.role 'Client'}}
+                    <div class="container-fluid">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">DATE OCCURED</th>
+                                    <th scope="col">API NAME</th>
+                                    <th scope="col">WEBSITE</th>
+                                    <th scope="col">ERROR CODE</th>
+                                    <th scope="col">ERROR MESSAGE</th>
+                                </tr>
+                            </thead>
+                            {{#EasySearch.Each index=apiIndex}}
+                            {{#if $eq createdBy currentUser._id}}
+                            {{#if $eq status "fail"}}
+                            <tbody>
+                            <!-- START OF THE TABLE -->
+                                <tr>
+                                    <th scope="row">{{updatedTime}}</th>
+                                    <td>{{apiName}}</td>
+                                    <td>{{propertyName}}</td>
+                                    <td>{{response.response.statusCode}}</td>
+                                    <td>{{response.response.data.message}}</td>
+                                </tr>
+                            <!-- END OF TABLE -->
+                            </tbody>
+                            {{/if}}
+                            {{/if}}
+                            {{/EasySearch.Each}}
+                        </table>
+                    </div>
+                    {{/if}}
+                    <!-- End of properties -->
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

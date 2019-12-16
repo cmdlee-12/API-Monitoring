@@ -63,3 +63,13 @@ Router.route('/Profile', function () {
     this.render('profile');
     this.layout('mainLayout');
 });
+
+Router.route('/Error', function () {
+    this.render('error');
+    this.layout('mainLayout');
+});
+
+Router.route('/Properties', function () {
+    this.render('properties');
+    this.layout('mainLayout');
+});

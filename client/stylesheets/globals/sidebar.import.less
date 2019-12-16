@@ -233,3 +233,54 @@ button#sidebarCollapse {
 #sidebar ul.components li {
   padding: 20px 0px;
 }
+
+.sidebar .content-side__wrapper {
+  width: 165px;
+} 
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  background-color: #f3f3f7;
+  overflow-x: hidden;
+  transition: 0.2s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #F1F1F1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 36px;
+  margin-right: 30px;
+}
+
+#main {
+  transition: margin-left 0.5s;
+  margin-left: 0px !important;
+  margin-right: 250px;
+}
+
+.toggleMain {
+  margin-right: 250px;
+}
+
+.toggleSidebar {
+  width: 250px;
+}
+
+.not-active{
+  opacity: 0.4;
+}

@@ -1,7 +1,3 @@
-Template.api.onCreated(function () {
-  this.selectedCategory = new ReactiveVar();
-});
-
 Template.api.onRendered(function () {
   sideBar();
 
@@ -10,7 +6,6 @@ Template.api.onRendered(function () {
       $('.content-side__wrapper').toggle();
     })
   }
-
   Chart.pluginService.register({
     beforeDraw: function (chart) {
       if (chart.config.options.elements.center) {
@@ -46,14 +41,12 @@ Template.api.onRendered(function () {
       }
     }
   });
-
   var downtime = [];
   var id = document.getElementsByClassName("updown-chart");
   for (var i = 0; i < id.length; i++) {
     var apiAddress1 = apiAddress.find({
       _id: id[i].value
     }).fetch();
-
     for (var a = 0; a < apiAddress1.length; a++) {
       for (var b = 0; b < apiAddress1[a].statusRecord.length; b++) {
         if (apiAddress1[a].statusRecord[b].responseTime == 0) {
@@ -61,13 +54,10 @@ Template.api.onRendered(function () {
         }
       }
     }
-
     if (downtime.length == 0) {
       var finalUptime = 100;
       var finalDowntime = 0
-
     } else {
-
       var diff = new Date("1970-1-1 " + downtime[downtime.length - 1]) - new Date("1970-1-1 " + downtime[0]);
       var seconds = Math.floor(diff / 1000);
       var minutes = Math.floor(seconds / 60);
@@ -76,9 +66,7 @@ Template.api.onRendered(function () {
       minutes = minutes % 60;
       var finalDowntime = ((((minutes * 60) + seconds) / 86400) * 100).toFixed(2);
       var finalUptime = (100 - finalDowntime).toFixed(2);
-
     }
-
     this.canvas = document.getElementById('upChart-' + id[i].value);
     this.ctx = this.canvas.getContext('2d');
     var myChart = new Chart(this.ctx, {
@@ -114,18 +102,13 @@ Template.api.onRendered(function () {
         },
       }
     });
-
   }
-
   Tracker.autorun(function () {
-
     $(".btn-group > .btn").click(function () {
       $(this).addClass("active").siblings().removeClass("active");
       $(this).addClass("active");
     });
     var apiData = apiAddress.find({}).fetch();
-
-
     for (var i = 0; i < apiData.length; i++) {
       try {
         var ctx = document.getElementById("statusChart-" + apiData[i]._id).getContext('2d');
@@ -171,10 +154,7 @@ Template.api.onRendered(function () {
             }
           }
         });
-      } catch (err) {
-
-      }
-
+      } catch (err) {}
     }
   });
 });
@@ -206,8 +186,8 @@ Template.api.events({
     }
 
     //SET MODAL VALUES
-    $("#apiView").attr("data-target",".view-"+propertyID);
-    $("#editPropertyDetails").attr("data-target", ".editProperty-"+propertyID);
+    $("#apiView").attr("data-target", ".view-" + propertyID);
+    $("#editPropertyDetails").attr("data-target", ".editProperty-" + propertyID);
     console.log(propertyID)
     //set last run, performance values
     var apiAddress1 = apiAddress.find({
@@ -222,7 +202,7 @@ Template.api.events({
           updatedTime: apiAddress1[i].updatedTime,
           apiName: apiAddress1[i].apiName
         })
-        
+
         //sets edit api field value
         this.canvas = document.getElementById('statusChart');
         this.ctx = this.canvas.getContext('2d');

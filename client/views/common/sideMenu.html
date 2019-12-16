@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-lg-12 content-side__wrapper">
                     <div class="col-wrapper">
-                        <h1 class="breadcrumb-title2 mt-2"><a href="#"><img src="/icons/error.png" alt="error"
+                        <h1 class="breadcrumb-title2 mt-2"><a href="/error"><img src="/icons/error.png" alt="error"
                                     class="img-fluid">Error Reports</a></h1>
                     </div>
                     <div class="col-wrapper">
@@ -15,12 +15,21 @@
                                     alt="starred" class="img-fluid">Starred</a></h1>
                     </div>
                     <div class="col-wrapper">
-                        <h1 class="breadcrumb-title2 mt-2"><a href="/api"><img src="/icons/error.png"
-                                    alt="starred" class="img-fluid">API</a></h1>
+                        <h1 class="breadcrumb-title2 mt-2"><a href="/api"><img src="/icons/error.png" alt="properties"
+                                    class="img-fluid">API</a></h1>
                     </div>
+                    {{#if $eq currentUser.profile.role 'Administrator'}}
+                    <div class="col-wrapper">
+                        <h1 class="breadcrumb-title2 mt-2"><a href="/properties"><img src="/icons/starred.png" alt="properties"
+                                    class="img-fluid">Properties</a></h1>
+                    </div>
+                    {{/if}}
+                    {{#if $eq currentUser.profile.role 'Client'}}
                     <div class="row">
                         <div class="col-lg-12">
-                            <h1 class="breadcrumb-title">Properties</h1>
+                            <a href="/dashboard">
+                                <h1 class="breadcrumb-title">Properties</h1>
+                            </a>
                         </div>
                     </div>
                     <div class="row">
@@ -32,6 +41,7 @@
                             </ul>
                         </div>
                     </div>
+                    {{/if}}
                 </div>
             </div>
         </div>
