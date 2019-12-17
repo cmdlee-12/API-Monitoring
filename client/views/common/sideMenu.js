@@ -6,13 +6,15 @@ Template.sidemenu.helpers({
             if (userProperties[i].updatedTime) {
                 result.push({
                     _id: userProperties[i]._id,
-                    propertyName: userProperties[i].propertyName
+                    propertyName: userProperties[i].propertyName,
+                    createdBy: userProperties[i].createdBy
 
                 })
             } else {
                 result.push({
                     _id: userProperties[i]._id,
                     propertyName: userProperties[i].propertyName,
+                    createdBy: userProperties[i].createdBy
                 })
             }
         }

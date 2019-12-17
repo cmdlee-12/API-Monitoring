@@ -210,6 +210,50 @@ Meteor.methods({
       })
     }
   },
+  'getUpDownTimeAPI': function (id) {
+    var downTime = [];
+
+    var apiAddress1 = apiAddress.find({
+      _id: id
+    }).fetch();
+
+    for (var i = 0; i < apiAddress1.length; i++) {
+      for (var j = 0; j < apiAddress1[i].statusRecord.length; j++) {
+        if (apiAddress1[i].statusRecord[j].responseTime == 0) {
+          downTime.push(apiAddress1[i].statusRecord[j].time);
+        }
+      }
+    }
+
+    if (downTime.length == 0) {
+      apiAddress.update({
+        _id: id
+      }, {
+        $set: {
+          uptime: 100,
+          downtime: 0
+        }
+      })
+    } else {
+      var diff = new Date("1970-1-1 " + downTime[downTime.length - 1]) - new Date("1970-1-1 " + downTime[0]);
+      var seconds = Math.floor(diff / 1000);
+      var minutes = Math.floor(seconds / 60);
+      seconds = seconds % 60;
+      var hours = Math.floor(minutes / 60);
+      minutes = minutes % 60;
+      var finalDowntime = ((((minutes * 60) + seconds) / 86400) * 100).toFixed(2);
+      var finalUptime = (100 - finalDowntime).toFixed(2);
+
+      apiAddress.update({
+        _id: id
+      }, {
+        $set: {
+          uptime: finalUptime,
+          downtime: finalDowntime
+        }
+      })
+    }
+  },
   'updateProperty': function (id, name, url, isStarred) {
     Properties.update({
       _id: id

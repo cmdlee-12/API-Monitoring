@@ -1,4 +1,107 @@
+Template.starred.onCreated(function () {
+    upDownTimeChart = this.subscribe('upDownTimeChart');
+});
+
+/*global drawchart */
+drawchart = function (id, dataupTime, dataDown) {
+
+    var data = {
+        datasets: [{
+                label: '',
+                data: [dataupTime, dataDown],
+                backgroundColor: ['#0FE2FF', '#5E5EEC']
+            },
+
+        ]
+    };
+    var ctx = document.getElementById("upChart-" + id);
+    new Chart(ctx.getContext('2d'), {
+        type: "doughnut",
+        data: data,
+        options: {
+            elements: {
+                center: {
+                    text: [dataupTime + "%"],
+                    color: '#000',
+                    fontStyle: 'Proxima Nova Rg',
+                    sidePadding: 20
+                }
+            },
+            layout: {
+                padding: {
+                    left: 13,
+                    right: 13,
+                    top: 13,
+                    bottom: 13
+                }
+            },
+            cutoutPercentage: 70,
+            legend: {
+                display: false
+            }
+        }
+    });
+};
+
 Template.starred.onRendered(function () {
+    Tracker.autorun(function () {
+        if (upDownTimeChart.ready()) {
+            var updownChartLength = $(".updown-chart").length;
+            var chart = $(".updown-chart");
+            for (var i = 0; i < updownChartLength; i++) {
+                var propertiesdata = Properties.find({
+                    _id: chart[i].value
+                });
+                var dataupTime = [];
+                var dataDown = [];
+                propertiesdata.forEach(function (option) {
+
+                    dataupTime.push(option.uptime);
+                    dataDown.push(option.downtime)
+                });
+
+                drawchart(chart[i].value, dataupTime, dataDown);
+            }
+        }
+        Chart.pluginService.register({
+            beforeDraw: function (chart) {
+                if (chart.config.options.elements.center) {
+                    //Get ctx from string
+                    var ctx = chart.chart.ctx;
+                    //Get options from the center object in options
+                    var centerConfig = chart.config.options.elements.center;
+                    var fontStyle = centerConfig.fontStyle || 'Arial';
+                    var txt = centerConfig.text;
+                    var color = centerConfig.color || '#000';
+                    var sidePadding = centerConfig.sidePadding || 20;
+                    var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+                    //Start with a base font of 30px
+                    ctx.font = "40px " + fontStyle;
+                    //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+                    var stringWidth = ctx.measureText(txt).width;
+                    var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+                    // Find out how much the font can grow in width.
+                    var widthRatio = elementWidth / stringWidth;
+                    var newFontSize = Math.floor(30 * widthRatio);
+                    var elementHeight = (chart.innerRadius * 2);
+                    // Pick a new font size so it will not be larger than the height of label.
+                    var fontSizeToUse = Math.min(newFontSize, elementHeight);
+                    //Set font settings to draw it correctly.
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+                    var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+                    ctx.font = fontSizeToUse + "px " + fontStyle;
+                    ctx.fillStyle = color;
+                    //Draw text in center
+                    ctx.fillText(txt, centerX, centerY);
+                }
+            }
+        });
+
+    });
+
+    // other functions
     sideBar();
 
     function sideBar() {
@@ -6,91 +109,6 @@ Template.starred.onRendered(function () {
             $('.content-side__wrapper').toggle();
         })
     }
-
-    Chart.pluginService.register({
-        beforeDraw: function (chart) {
-            if (chart.config.options.elements.center) {
-                //Get ctx from string
-                var ctx = chart.chart.ctx;
-                //Get options from the center object in options
-                var centerConfig = chart.config.options.elements.center;
-                var fontStyle = centerConfig.fontStyle || 'Arial';
-                var txt = centerConfig.text;
-                var color = centerConfig.color || '#000';
-                var sidePadding = centerConfig.sidePadding || 20;
-                var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
-                //Start with a base font of 30px
-                ctx.font = "40px " + fontStyle;
-                //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
-                var stringWidth = ctx.measureText(txt).width;
-                var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
-                // Find out how much the font can grow in width.
-                var widthRatio = elementWidth / stringWidth;
-                var newFontSize = Math.floor(30 * widthRatio);
-                var elementHeight = (chart.innerRadius * 2);
-                // Pick a new font size so it will not be larger than the height of label.
-                var fontSizeToUse = Math.min(newFontSize, elementHeight);
-                //Set font settings to draw it correctly.
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
-                var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
-                ctx.font = fontSizeToUse + "px " + fontStyle;
-                ctx.fillStyle = color;
-                //Draw text in center
-                ctx.fillText(txt, centerX, centerY);
-            }
-        }
-    });
-    var PropertyUD = []
-    var id = document.getElementsByClassName("updown-chart");
-    for (var i = 0; i < id.length; i++) {
-        var properties = Properties.find({
-            _id: id[i].value
-        }).fetch();
-        for (var x = 0; x < properties.length; x++) {
-            PropertyUD.push({
-                uptime: properties[x].uptime,
-                downtime: properties[x].downtime
-            })
-        }
-        this.canvas = document.getElementById('upChart-' + id[i].value);
-        this.ctx = this.canvas.getContext('2d');
-        var myChart = new Chart(this.ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ["UP", "DOWN"],
-                datasets: [{
-                    label: '',
-                    data: [PropertyUD[i].uptime, PropertyUD[i].downtime],
-                    backgroundColor: ['#0FE2FF', '#5E5EEC'],
-                }]
-            },
-            options: {
-                elements: {
-                    center: {
-                        text: [PropertyUD[i].uptime + "%"],
-                        color: '#000',
-                        fontStyle: 'Proxima Nova Rg',
-                        sidePadding: 20 //
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 13,
-                        right: 13,
-                        top: 13,
-                        bottom: 13
-                    }
-                },
-                cutoutPercentage: 70,
-                legend: {
-                    display: false
-                },
-            }
-        });
-    }
-
 });
 
 Template.starred.events({
@@ -108,13 +126,15 @@ Template.starred.events({
 
         container.classList.toggle("toggleContainer");
 
-        $(event.currentTarget.tagName).not(event.currentTarget).removeClass("active");
-        $(event.currentTarget.dataset.postId).addClass("active");
+        //add not-active (opacity) to property card that is inactive
+        $(".property-card").not(event.currentTarget).addClass("not-active");
+        $(event.currentTarget).removeClass("not-active");
 
         if ($(".property-card.toggleContainer").length > 1) {
             $(event.currentTarget.tagName).not(event.currentTarget).removeClass("toggleContainer");
         } else if ($(".property-card.toggleContainer").length == 0) {
             document.getElementById("mySidenav").style.width = "0";
+            $(".property-card").removeClass("not-active");
         }
 
         //set data target of edit btn

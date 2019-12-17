@@ -36,7 +36,9 @@
                         <div class="col-lg-12">
                             <ul class="menu-list">
                                 {{#each properties}}
+                                {{#if $eq createdBy currentUser._id}}
                                 <li class="pt-3"><a href="/apis/{{_id}}">{{propertyName}}</a></li>
+                                {{/if}}
                                 {{/each}}
                             </ul>
                         </div>

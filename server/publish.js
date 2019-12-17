@@ -57,3 +57,7 @@ Meteor.publish("properties", function () {
 Meteor.publish("upDownTimeChart", function () {
   return Properties.find({});
 });
+
+Meteor.publish("upDownTimeApiChart", function () {
+  return apiAddress.find({});
+});

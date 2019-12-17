@@ -12,75 +12,75 @@ Template.apiList.onRendered(function () {
       $(this).addClass("active");
     });
     var apiData = apiAddress.find({}).fetch();
-    var downtime = [];
-    var id = document.getElementsByClassName("updown-chart");
-    console.log(id.length)
-    for (var i = 0; i < id.length; i++) {
-      var apiAddress1 = apiAddress.find({
-        _id: id[i].value
-      }).fetch();
+    // var downtime = [];
+    // var id = document.getElementsByClassName("updown-chart");
+    // console.log(id.length)
+    // for (var i = 0; i < id.length; i++) {
+    //   var apiAddress1 = apiAddress.find({
+    //     _id: id[i].value
+    //   }).fetch();
 
-      for (var a = 0; a < apiAddress1.length; a++) {
-        for (var b = 0; b < apiAddress1[a].statusRecord.length; b++) {
-          if (apiAddress1[a].statusRecord[b].responseTime == 0) {
-            downtime.push(apiAddress1[a].statusRecord[b].time)
-          }
-        }
-      }
+    //   for (var a = 0; a < apiAddress1.length; a++) {
+    //     for (var b = 0; b < apiAddress1[a].statusRecord.length; b++) {
+    //       if (apiAddress1[a].statusRecord[b].responseTime == 0) {
+    //         downtime.push(apiAddress1[a].statusRecord[b].time)
+    //       }
+    //     }
+    //   }
 
-      if (downtime.length == 0) {
-        var finalUptime = 100;
-        var finalDowntime = 0
+    //   if (downtime.length == 0) {
+    //     var finalUptime = 100;
+    //     var finalDowntime = 0
 
-      } else {
+    //   } else {
 
-        var diff = new Date("1970-1-1 " + downtime[downtime.length - 1]) - new Date("1970-1-1 " + downtime[0]);
-        var seconds = Math.floor(diff / 1000);
-        var minutes = Math.floor(seconds / 60);
-        seconds = seconds % 60;
-        var hours = Math.floor(minutes / 60);
-        minutes = minutes % 60;
-        var finalDowntime = ((((minutes * 60) + seconds) / 86400) * 100).toFixed(2);
-        var finalUptime = (100 - finalDowntime).toFixed(2);
+    //     var diff = new Date("1970-1-1 " + downtime[downtime.length - 1]) - new Date("1970-1-1 " + downtime[0]);
+    //     var seconds = Math.floor(diff / 1000);
+    //     var minutes = Math.floor(seconds / 60);
+    //     seconds = seconds % 60;
+    //     var hours = Math.floor(minutes / 60);
+    //     minutes = minutes % 60;
+    //     var finalDowntime = ((((minutes * 60) + seconds) / 86400) * 100).toFixed(2);
+    //     var finalUptime = (100 - finalDowntime).toFixed(2);
 
-      }
-      console.log(finalUptime)
-      this.canvas = document.getElementById('upChart-' + id[i].value);
-      this.ctx = this.canvas.getContext('2d');
-      var myChart = new Chart(this.ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ["UP", "DOWN"],
-          datasets: [{
-            label: '',
-            data: [finalUptime, finalDowntime],
-            backgroundColor: ['#0FE2FF', '#5E5EEC'],
-          }]
-        },
-        options: {
-          elements: {
-            center: {
-              text: [finalUptime + "%"],
-              color: '#000',
-              fontStyle: 'Proxima Nova Rg',
-              sidePadding: 20 //
-            }
-          },
-          layout: {
-            padding: {
-              left: 13,
-              right: 13,
-              top: 13,
-              bottom: 13
-            }
-          },
-          cutoutPercentage: 70,
-          legend: {
-            display: false
-          },
-        }
-      });
-    }
+    //   }
+    //   console.log(finalUptime)
+    //   this.canvas = document.getElementById('upChart-' + id[i].value);
+    //   this.ctx = this.canvas.getContext('2d');
+    //   var myChart = new Chart(this.ctx, {
+    //     type: 'doughnut',
+    //     data: {
+    //       labels: ["UP", "DOWN"],
+    //       datasets: [{
+    //         label: '',
+    //         data: [finalUptime, finalDowntime],
+    //         backgroundColor: ['#0FE2FF', '#5E5EEC'],
+    //       }]
+    //     },
+    //     options: {
+    //       elements: {
+    //         center: {
+    //           text: [finalUptime + "%"],
+    //           color: '#000',
+    //           fontStyle: 'Proxima Nova Rg',
+    //           sidePadding: 20 //
+    //         }
+    //       },
+    //       layout: {
+    //         padding: {
+    //           left: 13,
+    //           right: 13,
+    //           top: 13,
+    //           bottom: 13
+    //         }
+    //       },
+    //       cutoutPercentage: 70,
+    //       legend: {
+    //         display: false
+    //       },
+    //     }
+    //   });
+    // }
 
     for (var i = 0; i < apiData.length; i++) {
       try {
