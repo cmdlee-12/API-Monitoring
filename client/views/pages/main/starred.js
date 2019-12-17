@@ -112,6 +112,128 @@ Template.starred.onRendered(function () {
 });
 
 Template.starred.events({
+    "click #edit-property": function (event, template) {
+        var propertyID = event.target.value;
+        var name = $("#propertyName-" + propertyID).val();
+        var url = $("#propertyURL-" + propertyID).val();
+        var isStarred = $('#propertyStarred-' + propertyID).is(":checked");
+        var b = document.getElementById('updatingFrequency-' + propertyID);
+        var frequency = b.options[b.selectedIndex].text;
+        Meteor.call("updateProperty", propertyID, name, url, isStarred, function (error, result) {
+            if (error) {
+                toastr.error(JSON.stringify(error, null, "\t"), 'Error');
+            } else {
+                Meteor.call("changeFreqencyProperty", frequency, propertyID, function (error, result) {
+                    if (error) {
+                        toastr.error("error", error);
+                    }
+                });
+                toastr.success("Successfully updated!");
+            }
+            if (result) {
+                toastr.error(JSON.stringify(result, null, "\t"), 'Error');
+            }
+        });
+    },
+    "click #btn-property": function (event, template) {
+        var propertyID = event.target.value;
+        var userProperties = Properties.find({
+            _id: propertyID
+        }).fetch();
+        var res = [];
+        for (var i = 0; i < userProperties.length; i++) {
+            res.push({
+                url: userProperties[i].propertyURL
+            })
+        }
+
+        Meteor.call("getLastRun", propertyID, function (error, result) {
+            if (error) {
+                toastr.error(JSON.stringify(error, null, "\t"), '2Error');
+            } else {
+                Meteor.call("getStatus", propertyID, function (error, result) {
+                    if (error) {
+                        toastr.error(JSON.stringify(error, null, "\t"), '3Error');
+                    } else {
+                        loadClient(propertyID, res[0].url);
+
+                        function loadClient(propertyID, url) {
+                            gapi.client.setApiKey("AIzaSyDuNP8vCo87mQ4RwWl0RVvN9mFXKSHmF48");
+                            return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/pagespeedonline/v4/rest")
+                                .then(function () {
+                                        var propertyURL = url;
+                                        var id = propertyID;
+                                        return gapi.client.pagespeedonline.pagespeedapi.runpagespeed({
+                                                "url": propertyURL,
+                                                "filter_third_party_resources": true,
+                                                "screenshot": true,
+                                                "snapshots": true,
+                                                "strategy": "desktop"
+                                            })
+                                            .then(function (response) {
+                                                    if (response.result.responseCode == 404) {
+                                                        toastr.error("404 Site Not Found");
+                                                        Meteor.call("getPageSpeed", id, "Site Not Found", function (error, result) {
+                                                            if (error) {
+                                                                toastr.error(JSON.stringify(error, null, "\t"), '4Error');
+                                                            } else {
+                                                                setTimeout(function () {
+                                                                    Meteor.call("getUpDownTime", id, function (error, result) {
+                                                                        if (error) {
+                                                                            toastr.error(JSON.stringify(error, null, "\t"), '5Error');
+                                                                        }
+                                                                        if (result) {
+                                                                            toastr.error(JSON.stringify(result, null, "\t"), '6Error');
+                                                                        }
+                                                                    });
+                                                                }, 30000);
+                                                            }
+                                                            if (result) {
+                                                                toastr.error(JSON.stringify(result, null, "\t"), '7Error');
+                                                            }
+                                                        });
+                                                    } else {
+                                                        Meteor.call("getPageSpeed", id, response.result.ruleGroups.SPEED.score, function (error, result) {
+                                                            if (error) {
+                                                                toastr.error(JSON.stringify(error, null, "\t"), '4Error');
+                                                            } else {
+                                                                setTimeout(function () {
+                                                                    Meteor.call("getUpDownTime", id, function (error, result) {
+                                                                        if (error) {
+                                                                            toastr.error(JSON.stringify(error, null, "\t"), '5Error');
+                                                                        }
+                                                                        if (result) {
+                                                                            toastr.error(JSON.stringify(result, null, "\t"), '6Error');
+                                                                        }
+                                                                    });
+                                                                }, 30000);
+                                                            }
+                                                            if (result) {
+                                                                toastr.error(JSON.stringify(result, null, "\t"), '7Error');
+                                                            }
+                                                        });
+                                                    }
+                                                },
+                                                function (err) {
+                                                    toastr.error("Execute error", err);
+                                                });
+                                    },
+                                    function (err) {
+                                        toastr.error("Error loading GAPI client for API" + err, "Page speed error");
+                                    });
+                        }
+                        gapi.load("client");
+                    }
+                    if (result) {
+                        toastr.error(JSON.stringify(result, null, "\t"), '8Error');
+                    }
+                });
+            }
+            if (result) {
+                toastr.error(JSON.stringify(result, null, "\t"), '9Error');
+            }
+        });
+    },
     "click .closebtn": function (event) {
         document.getElementById("mySidenav").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
@@ -251,128 +373,6 @@ Template.starred.events({
             }
             $(".lastRun").html(final[0].updatedTime);
         }
-    },
-    "click #edit-property": function (event, template) {
-        var propertyID = event.target.value;
-        var name = $("#propertyName-" + propertyID).val();
-        var url = $("#propertyURL-" + propertyID).val();
-        var isStarred = $('#propertyStarred-' + propertyID).is(":checked");
-        var b = document.getElementById('updatingFrequency-' + propertyID);
-        var frequency = b.options[b.selectedIndex].text;
-        Meteor.call("updateProperty", propertyID, name, url, isStarred, function (error, result) {
-            if (error) {
-                toastr.error(JSON.stringify(error, null, "\t"), 'Error');
-            } else {
-                Meteor.call("changeFreqencyProperty", frequency, propertyID, function (error, result) {
-                    if (error) {
-                        toastr.error("error", error);
-                    }
-                });
-                toastr.success("Successfully updated!");
-            }
-            if (result) {
-                toastr.error(JSON.stringify(result, null, "\t"), 'Error');
-            }
-        });
-    },
-    "click #btn-property": function (event, template) {
-        var propertyID = event.target.value;
-        var userProperties = Properties.find({
-            _id: propertyID
-        }).fetch();
-        var res = [];
-        for (var i = 0; i < userProperties.length; i++) {
-            res.push({
-                url: userProperties[i].propertyURL
-            })
-        }
-
-        Meteor.call("getLastRun", propertyID, function (error, result) {
-            if (error) {
-                toastr.error(JSON.stringify(error, null, "\t"), '2Error');
-            } else {
-                Meteor.call("getStatus", propertyID, function (error, result) {
-                    if (error) {
-                        toastr.error(JSON.stringify(error, null, "\t"), '3Error');
-                    } else {
-                        loadClient(propertyID, res[0].url);
-
-                        function loadClient(propertyID, url) {
-                            gapi.client.setApiKey("AIzaSyDuNP8vCo87mQ4RwWl0RVvN9mFXKSHmF48");
-                            return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/pagespeedonline/v4/rest")
-                                .then(function () {
-                                        var propertyURL = url;
-                                        var id = propertyID;
-                                        return gapi.client.pagespeedonline.pagespeedapi.runpagespeed({
-                                                "url": propertyURL,
-                                                "filter_third_party_resources": true,
-                                                "screenshot": true,
-                                                "snapshots": true,
-                                                "strategy": "desktop"
-                                            })
-                                            .then(function (response) {
-                                                    if (response.result.responseCode == 404) {
-                                                        toastr.error("404 Site Not Found");
-                                                        Meteor.call("getPageSpeed", id, "Site Not Found", function (error, result) {
-                                                            if (error) {
-                                                                toastr.error(JSON.stringify(error, null, "\t"), '4Error');
-                                                            } else {
-                                                                setTimeout(function () {
-                                                                    Meteor.call("getUpDownTime", id, function (error, result) {
-                                                                        if (error) {
-                                                                            toastr.error(JSON.stringify(error, null, "\t"), '5Error');
-                                                                        }
-                                                                        if (result) {
-                                                                            toastr.error(JSON.stringify(result, null, "\t"), '6Error');
-                                                                        }
-                                                                    });
-                                                                }, 30000);
-                                                            }
-                                                            if (result) {
-                                                                toastr.error(JSON.stringify(result, null, "\t"), '7Error');
-                                                            }
-                                                        });
-                                                    } else {
-                                                        Meteor.call("getPageSpeed", id, response.result.ruleGroups.SPEED.score, function (error, result) {
-                                                            if (error) {
-                                                                toastr.error(JSON.stringify(error, null, "\t"), '4Error');
-                                                            } else {
-                                                                setTimeout(function () {
-                                                                    Meteor.call("getUpDownTime", id, function (error, result) {
-                                                                        if (error) {
-                                                                            toastr.error(JSON.stringify(error, null, "\t"), '5Error');
-                                                                        }
-                                                                        if (result) {
-                                                                            toastr.error(JSON.stringify(result, null, "\t"), '6Error');
-                                                                        }
-                                                                    });
-                                                                }, 30000);
-                                                            }
-                                                            if (result) {
-                                                                toastr.error(JSON.stringify(result, null, "\t"), '7Error');
-                                                            }
-                                                        });
-                                                    }
-                                                },
-                                                function (err) {
-                                                    toastr.error("Execute error", err);
-                                                });
-                                    },
-                                    function (err) {
-                                        toastr.error("Error loading GAPI client for API" + err, "Page speed error");
-                                    });
-                        }
-                        gapi.load("client");
-                    }
-                    if (result) {
-                        toastr.error(JSON.stringify(result, null, "\t"), '8Error');
-                    }
-                });
-            }
-            if (result) {
-                toastr.error(JSON.stringify(result, null, "\t"), '9Error');
-            }
-        });
     },
     'change .filters': function (e) {
         propIndex.getComponentMethods( /* optional name */ )

@@ -218,9 +218,9 @@
                                     {{/if}}
                                  </div>
                                  <div class="col-lg-4">
-                                    <input class="updown-chart w-100" id="upDownTime-{{__originalId}}"
+                                    <input class="updown-chart-api w-100" id="upDownTime-{{__originalId}}"
                                        value="{{__originalId}}" hidden>
-                                    <canvas id="upChart-{{__originalId}}"></canvas>
+                                    <canvas id="upChartApi-{{__originalId}}"></canvas>
                                  </div>
                                  <div class="col-lg-4">
                                     <span class="pageSpeed-{{__originalId}} text-center"
@@ -402,6 +402,9 @@
                   <!-- end of edit modal -->
                   {{/if}}
                   {{/EasySearch.Each}}
+                  {{#EasySearch.IfNoResults index=apiIndex}}
+                  <div>No results found!</div>
+                  {{/EasySearch.IfNoResults}}
                </div>
                {{/if}}
                <!-- End of properties -->

@@ -155,7 +155,6 @@ Template.api.onRendered(function () {
     }
   });
 
-
   // other functions
   sideBar();
 
@@ -190,9 +189,7 @@ Template.api.events({
     });
   },
   "click #btn-property": function (event, template) {
-
     var propertyID = event.target.value;
-    console.log(propertyID)
     Meteor.call("getLastRunAPI", propertyID, function (error, result) {
       if (error) {
         toastr.error("Last Run Error", error);
@@ -254,13 +251,15 @@ Template.api.events({
 
     container.classList.toggle("toggleContainer");
 
-    $(event.currentTarget.tagName).not(event.currentTarget).removeClass("active");
-    $(event.currentTarget.dataset.postId).addClass("active");
+    //add not-active (opacity) to property card that is inactive
+    $(".property-card").not(event.currentTarget).addClass("not-active");
+    $(event.currentTarget).removeClass("not-active");
 
     if ($(".property-card.toggleContainer").length > 1) {
       $(event.currentTarget.tagName).not(event.currentTarget).removeClass("toggleContainer");
     } else if ($(".property-card.toggleContainer").length == 0) {
       document.getElementById("mySidenav").style.width = "0";
+      $(".property-card").removeClass("not-active");
     }
 
     //SET MODAL VALUES
@@ -362,112 +361,6 @@ Template.api.helpers({
   inputAttributes: () => {
     return {
       placeholder: 'Search'
-    }
-  },
-  api: function () {
-    var filteredStatus = Template.instance().selectedCategory.get();
-    if (filteredStatus == undefined || filteredStatus == "all") {
-      var currentUser = Meteor.userId();
-      var apiAddress1 = apiAddress.find({
-        createdBy: currentUser
-      }).fetch();
-      var final = [];
-      for (var i = 0; i < apiAddress1.length; i++) {
-        if (apiAddress1[i].updatedTime && apiAddress1[i].isProperty == "0") {
-          final.push({
-            _id: apiAddress1[i]._id,
-            createdByName: apiAddress1[i].createdByName,
-            createdBy: apiAddress1[i].createdBy,
-            apiName: apiAddress1[i].apiName,
-            apiAddress: apiAddress1[i].apiAddress,
-            getOrPost: apiAddress1[i].getOrPost,
-            usageOrStatus: apiAddress1[i].usageOrStatus,
-            path: apiAddress1[i].path,
-            response: (JSON.stringify(apiAddress1[i].response, null, 4)),
-            header: (JSON.stringify(apiAddress1[i].headers, null, 4)),
-            status: apiAddress1[i].status,
-            frequency: apiAddress1[i].frequency,
-            updatedTime: apiAddress1[i].updatedTime,
-            responseTime: apiAddress1[i].responseTime,
-            statusRecord: apiAddress1[i].statusRecord,
-            propertyID: apiAddress1[i].propertyID,
-            propertyName: apiAddress1[i].propertyName,
-            propertyURL: apiAddress1[i].propertyURL
-          })
-        } else if (apiAddress1[i].isProperty == "0") {
-          final.push({
-            _id: apiAddress1[i]._id,
-            apiName: apiAddress1[i].apiName,
-            apiAddress: apiAddress1[i].apiAddress,
-            getOrPost: apiAddress1[i].getOrPost,
-            usageOrStatus: apiAddress1[i].usageOrStatus,
-            path: apiAddress1[i].path,
-            response: (JSON.stringify(apiAddress1[i].response, null, 4)),
-            header: (JSON.stringify(apiAddress1[i].headers, null, 4)),
-            status: apiAddress1[i].status,
-            frequency: apiAddress1[i].frequency,
-            responseTime: apiAddress1[i].responseTime,
-            statusRecord: apiAddress1[i].statusRecord,
-            propertyID: apiAddress1[i].propertyID,
-            propertyName: apiAddress1[i].propertyName,
-            propertyURL: apiAddress1[i].propertyURL
-          })
-        }
-
-      }
-      return final;
-    } else {
-      var currentUser = Meteor.userId();
-      var apiAddress1 = apiAddress.find({
-        createdBy: currentUser,
-        status: filteredStatus
-      }).fetch();
-      var final = [];
-
-      for (var i = 0; i < apiAddress1.length; i++) {
-        if (apiAddress1[i].updatedTime && apiAddress1[i].isProperty == "0") {
-          final.push({
-            _id: apiAddress1[i]._id,
-            createdByName: apiAddress1[i].createdByName,
-            createdBy: apiAddress1[i].createdBy,
-            apiName: apiAddress1[i].apiName,
-            apiAddress: apiAddress1[i].apiAddress,
-            getOrPost: apiAddress1[i].getOrPost,
-            usageOrStatus: apiAddress1[i].usageOrStatus,
-            path: apiAddress1[i].path,
-            response: (JSON.stringify(apiAddress1[i].response, null, 4)),
-            header: (JSON.stringify(apiAddress1[i].headers, null, 4)),
-            status: apiAddress1[i].status,
-            frequency: apiAddress1[i].frequency,
-            updatedTime: apiAddress1[i].updatedTime,
-            responseTime: apiAddress1[i].responseTime,
-            statusRecord: apiAddress1[i].statusRecord,
-            propertyID: apiAddress1[i].propertyID,
-            propertyName: apiAddress1[i].propertyName,
-            propertyURL: apiAddress1[i].propertyURL
-          })
-        } else if (apiAddress1[i].isProperty == "0") {
-          final.push({
-            _id: apiAddress1[i]._id,
-            apiName: apiAddress1[i].apiName,
-            apiAddress: apiAddress1[i].apiAddress,
-            getOrPost: apiAddress1[i].getOrPost,
-            usageOrStatus: apiAddress1[i].usageOrStatus,
-            path: apiAddress1[i].path,
-            response: (JSON.stringify(apiAddress1[i].response, null, 4)),
-            header: (JSON.stringify(apiAddress1[i].headers, null, 4)),
-            status: apiAddress1[i].status,
-            frequency: apiAddress1[i].frequency,
-            responseTime: apiAddress1[i].responseTime,
-            statusRecord: apiAddress1[i].statusRecord,
-            propertyID: apiAddress1[i].propertyID,
-            propertyName: apiAddress1[i].propertyName,
-            propertyURL: apiAddress1[i].propertyURL
-          })
-        }
-
-      }
-      return final;
     }
   }
 });

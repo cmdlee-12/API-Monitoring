@@ -378,6 +378,9 @@
                         <!-- end of add api modal -->
                         {{/if}}
                         {{/EasySearch.Each}}
+                        {{#EasySearch.IfNoResults index=propIndex}}
+                        <div>No results found!</div>
+                        {{/EasySearch.IfNoResults}}
                     </div>
                     {{/if}}
                     <!-- End of properties -->

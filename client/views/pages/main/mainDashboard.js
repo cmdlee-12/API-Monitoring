@@ -46,7 +46,7 @@ drawchart = function (id, dataupTime, dataDown) {
 Template.mainDashboard.onRendered(function () {
   Tracker.autorun(function () {
     if (upDownTimeChart.ready()) {
-      var updownChartLength = $(".updown-chart").length;
+      var updownChartLength = $(".updown-chart").length;  
       var chart = $(".updown-chart");
       for (var i = 0; i < updownChartLength; i++) {
         var propertiesdata = Properties.find({
@@ -141,10 +141,18 @@ Template.mainDashboard.events({
           toastr.error(JSON.stringify(result, null, "\t"), 'Error');
         } else {
           toastr.success("API successfully added!", "Sucess")
-          var apiData = apiAddress.find({apiAddress: apiAddress1}).fetch();
+
+          //remove field's value
+          $("#formGroupExampleInput-" + propertyID).val("");
+          $("#formGroupExampleInput2-" + propertyID).val("");
+
+          //add uptime
+          var apiData = apiAddress.find({
+            apiAddress: apiAddress1
+          }).fetch();
           var final = [];
           for (var i = 0; i < apiData.length; i++) {
-            
+
             if (apiData[i].updatedTime) {
               final.push({
                 _id: apiData[i]._id
@@ -250,6 +258,26 @@ Template.mainDashboard.events({
                                                 if (result) {
                                                   toastr.error(JSON.stringify(result, null, "\t"), '6Error');
                                                 }
+                                                Tracker.autorun(function () {
+                                                  if (upDownTimeChart.ready()) {
+                                                    var updownChartLength = $(".updown-chart").length;
+                                                    var chart = $(".updown-chart");
+                                                    for (var i = 0; i < updownChartLength; i++) {
+                                                      var propertiesdata = Properties.find({
+                                                        _id: chart[i].value
+                                                      });
+                                                      var dataupTime = [];
+                                                      var dataDown = [];
+                                                      propertiesdata.forEach(function (option) {
+
+                                                        dataupTime.push(option.uptime);
+                                                        dataDown.push(option.downtime)
+                                                      });
+
+                                                      drawchart(chart[i].value, dataupTime, dataDown);
+                                                    }
+                                                  }
+                                                });
                                               });
                                             }, 30000);
                                           }
