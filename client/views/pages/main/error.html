@@ -33,29 +33,38 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th scope="col">DATE OCCURED</th>
+                                    <th scope="col">DATE UP</th>
+                                    <th scope="col">TIME LAPSED</th>
                                     <th scope="col">API NAME</th>
                                     <th scope="col">WEBSITE</th>
                                     <th scope="col">ERROR CODE</th>
                                     <th scope="col">ERROR MESSAGE</th>
                                 </tr>
                             </thead>
-                            {{#EasySearch.Each index=apiIndex}}
-                            {{#if $eq createdBy currentUser._id}}
-                            {{#if $eq status "fail"}}
                             <tbody>
-                            <!-- START OF THE TABLE -->
+                                {{#EasySearch.Each index=apiIndex}}
+                                {{#if $eq createdBy currentUser._id}}
+                                {{#if $eq status "fail"}}
                                 <tr>
-                                    <th scope="row">{{updatedTime}}</th>
+                                    <th class="occur" id="{{__originalId}}" scope="row">
+                                        {{#if $eq getResponse 0}}
+                                        {{statusRecord.[2].time}}
+                                        {{returnTime}}
+                                        {{/if}}
+                                    </th>
+                                    <!-- {{#if $gt getResponse2 0}} -->
+                                    <th></th>
+                                    <!-- {{/if}} -->
+                                    <th></th>
                                     <td>{{apiName}}</td>
                                     <td>{{propertyName}}</td>
                                     <td>{{response.response.statusCode}}</td>
                                     <td>{{response.response.data.message}}</td>
                                 </tr>
-                            <!-- END OF TABLE -->
+                                {{/if}}
+                                {{/if}}
+                                {{/EasySearch.Each}}
                             </tbody>
-                            {{/if}}
-                            {{/if}}
-                            {{/EasySearch.Each}}
                         </table>
                     </div>
                     {{/if}}

@@ -46,7 +46,7 @@ drawchart = function (id, dataupTime, dataDown) {
 Template.mainDashboard.onRendered(function () {
   Tracker.autorun(function () {
     if (upDownTimeChart.ready()) {
-      var updownChartLength = $(".updown-chart").length;  
+      var updownChartLength = $(".updown-chart").length;
       var chart = $(".updown-chart");
       for (var i = 0; i < updownChartLength; i++) {
         var propertiesdata = Properties.find({
@@ -103,11 +103,25 @@ Template.mainDashboard.onRendered(function () {
 
   // other functions
   sideBar();
-
+  propertyOption();
+  
   function sideBar() {
     $('.sidebar-toggle img').click(function () {
       $('.content-side__wrapper').toggle();
     })
+  }
+
+  function propertyOption() {
+    var properties = Properties.find({}).fetch();
+    var propertiesRes = [];
+    console.log(properties);
+    for (var i = 0; i < properties.length; i++) {
+      propertiesRes.push({
+        _id: properties[i]._id,
+        propertyName: properties[i].propertyName
+      });
+      $("#adminPropertyName").append("<option value='" + propertiesRes[i]._id + "'>" + propertiesRes[i].propertyName + "</option>");
+    }
   }
 });
 
@@ -130,7 +144,8 @@ Template.mainDashboard.events({
       var b = document.getElementById('addingFrequency-' + propertyID);
       var frequency = b.options[b.selectedIndex].text;
       var isProperty = "0";
-      Meteor.call("updateApi", apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
+      var userID = Meteor.userId();
+      Meteor.call("updateApi", userID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
         if (apiName === "") {
           toastr.error("API Name field is required", 'Error');
         }
@@ -208,6 +223,7 @@ Template.mainDashboard.events({
               var authentication = "";
               var frequency = "every 30 seconds";
               var isProperty = "1";
+              var userID = Meteor.userId();
 
               var properties = Properties.find({
                 propertyName: name
@@ -218,7 +234,7 @@ Template.mainDashboard.events({
                   _id: properties[i]._id
                 })
               }
-              Meteor.call("updateApi", name, url, getOrPost, usageOrStatus, authentication, frequency, propertyID[0]._id, isProperty, function (error, result) {
+              Meteor.call("updateApi", userID, name, url, getOrPost, usageOrStatus, authentication, frequency, propertyID[0]._id, isProperty, function (error, result) {
                 if (error) {
                   toastr.error(JSON.stringify(result, null, "\t"), '1Error');
                 } else {
@@ -531,6 +547,9 @@ Template.mainDashboard.events({
         propertyName: userProperties[i].propertyName,
         isStarred: userProperties[i].isStarred
       })
+
+      //set sidenav name
+      $("#propName").html(result[i].propertyName);
       //set form values
       $("#propertyName-" + propertyID).val(result[i].propertyName);
       $("#propertyURL-" + propertyID).val(result[i].propertyURL);

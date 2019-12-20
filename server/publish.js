@@ -49,9 +49,18 @@ Meteor.publish("users", function () {
 
 Meteor.publish("properties", function () {
 
-  return Properties.find({
-    createdBy: this.userId
-  });
+  if (Meteor.user().profile.role == 'Administrator') {
+
+    return Properties.find({
+
+    });
+
+  } else {
+
+    return Properties.find({
+      createdBy: this.userId
+    });
+  }
 });
 
 Meteor.publish("upDownTimeChart", function () {

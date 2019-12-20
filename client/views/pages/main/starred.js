@@ -290,7 +290,9 @@ Template.starred.events({
                     isStarred: userProperties[i].isStarred
                 })
             }
-
+            //set sidenav name
+            $("#propName").html(result[i].propertyName);
+            
             //set form values
             $("#propertyName-" + propertyID).val(result[i].propertyName);
             $("#propertyURL-" + propertyID).val(result[i].propertyURL);

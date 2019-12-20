@@ -2,7 +2,7 @@ Template.api.onCreated(function () {
   upDownTimeAPIChart = this.subscribe('upDownTimeApiChart');
 });
 
-/*global drawchart */
+/*api uptime 24 hours drawchart */
 drawApichart = function (id, dataupTime, dataDown) {
   var data = {
     datasets: [{
@@ -63,6 +63,49 @@ Template.api.onRendered(function () {
         drawApichart(chart[i].value, dataupTime, dataDown);
       }
     }
+    //performance
+    $(".btn-group > .btn").click(function () {
+      $(this).addClass("active").siblings().removeClass("active");
+      $(this).addClass("active");
+    });
+    var apiData = apiAddress.find({}).fetch();
+    for (var i = 0; i < apiData.length; i++) {
+      try {
+        var ctx = document.getElementById("statusChart-" + apiData[i]._id).getContext('2d');
+        var days = [];
+        var values = [];
+        var backgroundColorPerBar = [];
+        var borderColorPerBar = [];
+        for (var j = 0; j < apiData[i].statusRecord.length; j++) {
+          days.push(apiData[i].statusRecord[j].time);
+          values.push(apiData[i].statusRecord[j].responseTime);
+          backgroundColorPerBar.push("#0FE2FF");
+          borderColorPerBar.push("#5E5EEC");
+        }
+        var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: days,
+            datasets: [{
+              label: 'Response Time',
+              data: values,
+              backgroundColor: backgroundColorPerBar,
+              borderColor: borderColorPerBar,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+      } catch (err) {}
+    }
 
     //set chart's inner text
     Chart.pluginService.register({
@@ -100,73 +143,103 @@ Template.api.onRendered(function () {
         }
       }
     });
-    //performance
-    $(".btn-group > .btn").click(function () {
-      $(this).addClass("active").siblings().removeClass("active");
-      $(this).addClass("active");
-    });
-    var apiData = apiAddress.find({}).fetch();
-    for (var i = 0; i < apiData.length; i++) {
-      try {
-        var ctx = document.getElementById("statusChart-" + apiData[i]._id).getContext('2d');
-        var days = [];
-        var values = [];
-        for (var j = 0; j < apiData[i].statusRecord.length; j++) {
-          days.push(apiData[i].statusRecord[j].time);
-          values.push(apiData[i].statusRecord[j].responseTime);
-        }
-        var myChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: days,
-            datasets: [{
-              label: 'Response Time',
-              data: values,
-              backgroundColor: [
-                'rgba(20, 250, 20, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-              ],
-              borderColor: [
-                'rgba(2, 110, 2,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      } catch (err) {}
-    }
   });
 
   // other functions
   sideBar();
+  addUserOption();
 
   function sideBar() {
     $('.sidebar-toggle img').click(function () {
       $('.content-side__wrapper').toggle();
     })
   }
+
+  function addUserOption() {
+    var users = Meteor.users.find({}).fetch();
+    var userRes = [];
+    for (var i = 0; i < users.length; i++) {
+      userRes.push({
+        _id: users[i]._id,
+        username: users[i].username
+      });
+      $("#clientName").append("<option value='" + userRes[i]._id + "'>" + userRes[i].username + "</option>");
+    }
+  }
 });
 
-
 Template.api.events({
+  "click #add": function (event, template) {
+    var apiName = document.getElementById('formGroupExampleInput').value;
+    var apiAddress1 = document.getElementById('formGroupExampleInput2').value;
+    if (apiAddress.find({
+        apiAddress: apiAddress1
+      }).count() > 0) {
+      toastr.error("You have used this API url for a different API already", "Duplicate URL");
+
+    } else {
+      var e = document.getElementById("getOrPost");
+      var getOrPost = e.options[e.selectedIndex].text;
+      var a = document.getElementById("usageOrStatus");
+      var usageOrStatus = a.options[a.selectedIndex].text;
+      var authentication = document.getElementById('authorization').value;
+      var b = document.getElementById("addingFrequency");
+      var frequency = b.options[b.selectedIndex].text;
+
+      //get client & property name, id
+      var client = document.getElementById("clientName");
+      var clientName = client.options[client.selectedIndex].text;
+      var clientID = client.options[client.selectedIndex].value;
+
+      var property = document.getElementById("propertyName");
+      var propertyName = property.options[property.selectedIndex].text;
+      var propertyValue = property.options[property.selectedIndex].value;
+
+      var isProperty = "0";
+      Meteor.call("addAdminApi", clientName, clientID, propertyName, propertyValue, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, isProperty, function (error, result) {
+        if (apiName === "") {
+          toastr.error("API Name field is required", 'Error');
+        }
+        if (apiAddress1 === "") {
+          toastr.error("API Endpoint field is required", 'Error');
+        }
+        if (error) {
+          toastr.error(JSON.stringify(result, null, "\t"), 'Error on adding API');
+        } else {
+          toastr.success("API successfully added!", "Sucess")
+
+          //remove field's value
+          $("#formGroupExampleInput").val("");
+          $("#formGroupExampleInput2").val("");
+
+          //add uptime
+          var apiData = apiAddress.find({
+            apiAddress: apiAddress1
+          }).fetch();
+          var final = [];
+          for (var i = 0; i < apiData.length; i++) {
+
+            if (apiData[i].updatedTime) {
+              final.push({
+                _id: apiData[i]._id
+              })
+            } else {
+              final.push({
+                _id: apiData[i]._id
+              })
+            }
+          }
+          setTimeout(function () {
+            Meteor.call("getUpDownTimeAPI", final[0]._id, function (error, result) {
+              if (error) {
+                toastr.error(JSON.stringify(error, null, "\t"), 'Uptime/Downtime Error');
+              }
+            });
+          }, 30000);
+        }
+      });
+    }
+  },
   "click #edit-api": function (event, template) {
     var propertyID = event.target.value;
     var name = $("#apiName-" + propertyID).val();
@@ -174,17 +247,14 @@ Template.api.events({
     var frequency = b.options[b.selectedIndex].text;
     Meteor.call("updatePropertyAPI", propertyID, name, function (error, result) {
       if (error) {
-        toastr.error(JSON.stringify(error, null, "\t"), 'Error');
+        toastr.error(JSON.stringify(error, null, "\t"), 'Error on updating API');
       } else {
         Meteor.call("changeFreqency", frequency, propertyID, function (error, result) {
           if (error) {
-            toastr.error("error", error);
+            toastr.error("Error on changing frequency", error);
           }
         });
         toastr.success("Successfully updated!");
-      }
-      if (result) {
-        toastr.error(JSON.stringify(result, null, "\t"), 'Error');
       }
     });
   },
@@ -206,7 +276,7 @@ Template.api.events({
     result = event.currentTarget.dataset.value;
     Meteor.call("removeApi", result, function (error, result) {
       if (error) {
-        toastr.error("error", error);
+        toastr.error("Error on removing API", error);
       }
       if (result) {
 
@@ -219,10 +289,7 @@ Template.api.events({
     var frequency = b.options[b.selectedIndex].text;
     Meteor.call("changeFreqency", frequency, result, function (error, result) {
       if (error) {
-        toastr.error("error", error);
-      }
-      if (result) {
-
+        toastr.error("Error on changing frequency", error);
       }
     });
   },
@@ -232,7 +299,7 @@ Template.api.events({
     var id = result.split(/,(.+)/)[1];
     Meteor.call("changeFreqency", frequency, id, function (error, result) {
       if (error) {
-        toastr.error("error", error);
+        toastr.error("Error on changing frequency", error);
       }
       if (result) {}
     });
@@ -277,8 +344,10 @@ Template.api.events({
           updatedTime: apiAddress1[i].updatedTime,
           apiName: apiAddress1[i].apiName
         })
+        //set sidenav name
+        $("#apiContainerName").html(final[i].apiName);
 
-        //sets edit api field value
+        //performance chart
         this.canvas = document.getElementById('statusChart');
         this.ctx = this.canvas.getContext('2d');
         var gradientStroke = this.ctx.createLinearGradient(500, 0, 100, 500);
@@ -354,6 +423,21 @@ Template.api.events({
   'change .filters': function (e) {
     apiIndex.getComponentMethods( /* optional name */ )
       .addProps('status', $(e.target).val());
+  },
+  'change #clientName': function (event) {
+    
+    $("#propertyName").html("");
+    var clientID = event.target.value;
+
+    var properties = Properties.find({createdBy: clientID}).fetch();
+    var propertiesRes = [];
+    for (var i = 0; i < properties.length; i++) {
+      propertiesRes.push({
+        _id: properties[i]._id,
+        propertyName: properties[i].propertyName
+      });
+      $("#propertyName").append("<option value='" + propertiesRes[i]._id + "'>" + propertiesRes[i].propertyName + "</option>");
+    }
   }
 });
 Template.api.helpers({

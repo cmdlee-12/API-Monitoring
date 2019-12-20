@@ -34,28 +34,133 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- SIDEBAR -->
-                    <div id="mySidenav" class="sidenav">
-                        <a href="javascript:void(0)" class="closebtn">&times;</a>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="row mb-5">
-                                        <div class="col-lg-12 px-0 ">
-                                            <h4 class="data-title text-left">Performance</h4>
+                        <div class="col-lg-6">
+                            {{#if $eq currentUser.profile.role 'Administrator'}}
+                            <button class="btn btn-add__website float-right btn-lg" data-toggle="modal"
+                                data-target=".addApi"><i class="fas fa-plus"></i> Add API</button>
+                            <!-- add api modal -->
+                            <div class="modal fade addApi" tabindex="-1" role="dialog" aria-labelledby="addAPI"
+                                aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content py-4">
+                                        <div class="modal-header">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <h4>Add Property Details</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row mb-5">
-                                        <div class="col-lg-12 px-0">
-                                            <div class="performance-wrapper">
-                                                <canvas id="statusChart"></canvas>
+                                        <div class="modal-body">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <form>
+                                                            <div class="form-group">
+                                                                <label for="clientName">Client Name</label>
+                                                                <select name="clientName" id="clientName"
+                                                                    class="form-control py-4">
+
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="propertyName">Property Name</label>
+                                                                <select name="propertyName" id="propertyName"
+                                                                    class="form-control py-4">
+
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="formGroupExampleInput">API Name</label>
+                                                                <input class="form-control" id="formGroupExampleInput"
+                                                                    placeholder="Name" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="formGroupExampleInput2">API Access
+                                                                    Url</label>
+                                                                <input class="form-control" id="formGroupExampleInput2"
+                                                                    placeholder="Url" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="authorization">Authentication (if
+                                                                    required)</label>
+                                                                <input class="form-control" id="authorization"
+                                                                    placeholder="username:password">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="getOrPost">API Access</label>
+                                                                <select class="selectpicker form-control"
+                                                                    id="getOrPost">
+                                                                    <option>GET</option>
+                                                                    <option>POST</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="usageOrStatus">Usage or Status</label>
+                                                                <select class="selectpicker form-control"
+                                                                    id="usageOrStatus">
+                                                                    <option>Status</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="addingFrequency">Status update
+                                                                    frequency</label>
+                                                                <select id="addingFrequency"
+                                                                    class="selectpicker form-control">
+                                                                    <option>every 30 seconds</option>
+                                                                    <option>every 15 minutes</option>
+                                                                    <option>every 30 minutes</option>
+                                                                    <option>every 1 hour</option>
+                                                                    <option>every 3 hours</option>
+                                                                </select>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <button type="button" class="btn btn-danger px-3"
+                                                            data-dismiss="modal">Cancel</button>
+                                                        <button type="button" class="btn btn-add__website px-3" id="add"
+                                                            data-dismiss="modal">Add API</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row ">
+                            <!-- end of add api modal -->
+                            {{/if}}
+                        </div>
+                    </div>
+                    <!-- SIDEBAR -->
+                    <div id="mySidenav" class="sidenav">
+                        <a href="javascript:void(0)" class="closebtn">&times;</a>
+                        <div class="container">
+                            <div class="row mb-5">
+                                <div class="col-lg-12 px-0">
+                                    <h4 class="data-title text-left" id="apiContainerName"></h4>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-lg-12 px-0">
+                                    <h4 class="data-title text-left">Performance</h4>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-lg-12 px-0">
+                                    <div class="performance-wrapper">
+                                        <canvas id="statusChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="row ">
                                 <div class="col-lg-12">
                                     <div class="row mb-5">
                                         <div class="col-lg-12 px-0">
@@ -70,7 +175,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="row mb-5 ">
@@ -98,7 +203,7 @@
                         </div>
                     </div>
                     <!-- END OF SIDEBAR -->
-                    <!-- Properties -->
+                    <!-- API -->
                     {{#if $eq currentUser.profile.role 'Client'}}
                     <div class="container-fluid">
                         {{#EasySearch.Each index=apiIndex}}
@@ -168,94 +273,159 @@
                             aria-labelledby="view-{{this.__originalId}}" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <div class="modal-header">{{this.apiName}}</div>
                                     <div class="modal-body">
                                         <div class="row">
-                                            <div class="col-md-12 well well-sm">
-                                                <h1>{{> editableText collection="apiaddress" field="apiName"}}
+                                            <div class="col-lg-12 well well-sm mb-0">
+                                                <h1>{{this.apiName}}
                                                 </h1>
                                                 <hr>
-                                                <br>
-                                                <canvas id="statusChart-{{this.__originalId}}" height="80"></canvas>
-                                            </div>
-                                        </div>
-                                        <div class="ibox-content">
-                                            {{#if this.updatedTime}} Last updated:
-                                            {{this.updatedTime}} {{/if}}
-                                            <br>
-                                            <br>
-                                            <div class="form-group">
-                                                <div class="form-horizontal">
-                                                    <label for="formGroupExampleInput2">Update
-                                                        frequency:</label>
-                                                    <br>
-                                                    <div class="btn-group" role="group" aria-label="First group">
-                                                        {{#if $neq this.frequency 'every 30 seconds'}}
-                                                        <button type="button" class="btn btn-default"
-                                                            id="frequencyButton"
-                                                            data-value="every 30 seconds,{{this.__originalId}}">30
-                                                            seconds</button>
-                                                        {{else}}
-                                                        <button type="button" class="btn btn-default" disabled>Current:
-                                                            30
-                                                            seconds</button>
-                                                        {{/if}}
-                                                        {{#if $neq this.frequency 'every 1 minute'}}
-                                                        <button type="button" class="btn btn-default"
-                                                            id="frequencyButton"
-                                                            data-value="every 1 minute,{{this.__originalId}}">1
-                                                            minute</button>
-                                                        {{else}}
-                                                        <button type="button" class="btn btn-default" disabled>Current:
-                                                            1
-                                                            minute</button>
-                                                        {{/if}}
-                                                        {{#if $neq this.frequency 'every 15 minutes'}}
-                                                        <button type="button" class="btn btn-default"
-                                                            id="frequencyButton"
-                                                            data-value="every 15 minutes,{{this.__originalId}}">15
-                                                            minutes</button>
-                                                        {{else}}
-                                                        <button type="button" class="btn btn-default" disabled>Current:
-                                                            15
-                                                            minutes</button>
-                                                        {{/if}}
-                                                        {{#if $neq this.frequency 'every 30 minutes'}}
-                                                        <button type="button" class="btn btn-default"
-                                                            id="frequencyButton"
-                                                            data-value="every 30 minutes,{{this.__originalId}}">30
-                                                            minutes</button>
-                                                        {{else}}
-                                                        <button type="button" class="btn btn-default" disabled>Current:
-                                                            30
-                                                            minutes</button>
-                                                        {{/if}}
-                                                        {{#if $neq this.frequency 'every 1 hour'}}
-                                                        <button type="button" class="btn btn-default"
-                                                            id="frequencyButton"
-                                                            data-value="every 1 hour,{{this.__originalId}}">1
-                                                            hour</button>
-                                                        {{else}}
-                                                        <button type="button" class="btn btn-default" disabled>Current:
-                                                            1
-                                                            hour</button>
-                                                        {{/if}}
-                                                        {{#if $neq this.frequency 'every 3 hours'}}
-                                                        <button type="button" class="btn btn-default"
-                                                            id="frequencyButton"
-                                                            data-value="every 3 hours,{{this.__originalId}}">3
-                                                            hours</button>
-                                                        {{else}}
-                                                        <button type="button" class="btn btn-default" disabled>Current:
-                                                            3
-                                                            hours</button>
-                                                        {{/if}}
+                                                <div class="row py-2">
+                                                    <div class="col-lg-6">
+                                                        <h6><strong class="pr-3">Name </strong>{{this.apiName}}</h6>
+                                                        <h6><strong class="pr-3">Status </strong><span
+                                                                class="success">{{this.status}}</span></h6>
+                                                        <h6><strong class="pr-3">Method </strong>{{this.getOrPost}}</h6>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <h6><strong class="pr-3">URL </strong>{{this.apiAddress}}</h6>
+                                                        <h6><strong class="pr-3">Frequency </strong>{{this.frequency}}
+                                                        </h6>
+                                                        {{#if this.updatedTime}} <h6><strong class="pr-3">Last
+                                                                updated</strong>{{this.updatedTime}} </h6>{{/if}}
+                                                    </div>
+                                                </div>
+                                                <div class="row chart-wrapper my-3">
+                                                    <div class="col-lg-12">
+                                                        <canvas id="statusChart-{{this.__originalId}}"
+                                                            height="80"></canvas>
+                                                    </div>
+                                                </div>
+                                                <div class="row py-2">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group py-3">
+                                                            <div class="form-horizontal">
+                                                                <label for="formGroupExampleInput2">Update
+                                                                    frequency:</label>
+                                                                <br>
+                                                                <div class="btn-group" role="group"
+                                                                    aria-label="First group">
+                                                                    {{#if $neq this.frequency 'every 30 seconds'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 30 seconds,{{this.__originalId}}">30
+                                                                        seconds</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        30
+                                                                        seconds</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 1 minute'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 1 minute,{{this.__originalId}}">1
+                                                                        minute</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        1
+                                                                        minute</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 15 minutes'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 15 minutes,{{this.__originalId}}">15
+                                                                        minutes</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        15
+                                                                        minutes</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 30 minutes'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 30 minutes,{{this.__originalId}}">30
+                                                                        minutes</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        30
+                                                                        minutes</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 1 hour'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 1 hour,{{this.__originalId}}">1
+                                                                        hour</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        1
+                                                                        hour</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 3 hours'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 3 hours,{{this.__originalId}}">3
+                                                                        hours</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        3
+                                                                        hours</button>
+                                                                    {{/if}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row mt-3">
+                                            <div class="col-lg-12 well well-sm mb-0">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <h1>Recent Checks</h1>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Started At</th>
+                                                                    <th>Finished At</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="history-{{this.__originalId}}">
+                                                                {{croneData}}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-lg-12 well well-sm mb-0">
+                                                <h1>Uptime and Downtime</h1>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-lg-6">
+                                                    <input class="up-chart-api w-100" id="upTime-{{this.__originalId}}"
+                                                        value="{{this.__originalId}}" hidden>
+                                                    <canvas id="upTimeChart-{{this.__originalId}}"></canvas>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <input class="down-chart-api w-100"
+                                                        id="downTime-{{this.__originalId}}"
+                                                        value="{{this.__originalId}}" hidden>
+                                                    <canvas id="downTimeChart-{{this.__originalId}}"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="modal-footer"></div>
                                 </div>
                             </div>
                         </div>
@@ -274,7 +444,6 @@
                                         </div>
                                     </div>
                                     <div class="modal-body">
-                                        console.log(propertyID)
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-12">
@@ -326,7 +495,298 @@
                         {{/EasySearch.IfNoResults}}
                     </div>
                     {{/if}}
-                    <!-- End of properties -->
+                    <!-- End of API -->
+                    <!-- Admin API -->
+                    {{#if $eq currentUser.profile.role 'Administrator'}}
+                    <div class="container-fluid">
+                        {{#EasySearch.Each index=apiIndex}}
+                        {{#if $eq isProperty "0"}}
+                        <div class="row px-5">
+                            <div class="col-lg-12">
+                                <div class="property-card row mb-5 openNav" id="arrow-{{__originalId}}"
+                                    data-post-id="{{__originalId}}" name="propertyCard">
+                                    <div class="col-lg-4 py-4">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="col-lg-3 px-0">
+                                                        <img src="https://www.google.com/s2/favicons?domain={{apiAddress}}"
+                                                            class="img-fluid" alt="property-logo">
+                                                    </div>
+                                                    <div class="col-lg-9 pl-0">
+                                                        <h4 class="title">{{this.apiName}}</h4>
+                                                        <h6 class="url">{{this.propertyName}}</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7 py-4">
+                                        <div class="row align-items-center justify-content-center data-wrapper">
+                                            <div class="col-lg-4">
+                                                {{#if $eq status 'pass'}}
+                                                <span class="status-{{__originalId}}">
+                                                    <img src='/icons/up.png' class='img-fluid'>
+                                                </span>
+                                                {{/if}}
+                                                {{#if $eq status 'fail'}}
+                                                <span class="status-{{__originalId}}">
+                                                    <img src='/icons/down.png' class='img-fluid'>
+                                                </span>
+                                                {{/if}}
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <input class="updown-chart-api w-100" id="upDownTime-{{__originalId}}"
+                                                    value="{{__originalId}}" hidden>
+                                                <canvas id="upChartApi-{{__originalId}}"></canvas>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <span class="pageSpeed-{{__originalId}} text-center"
+                                                    id="gradient2">{{updatedTime}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center justify-content-center d-none d-lg-block">
+                                            <div class="col-lg-4 col-md-4">
+                                                <h4 class="data-title">Status</h4>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4">
+                                                <h4 class="data-title">Uptime 24 Hours</h4>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4">
+                                                <h4 class="data-title">Last Run</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- modal -->
+                        <div class="modal fade view-{{this.__originalId}}" tabindex="-1" role="dialog"
+                            aria-labelledby="view-{{this.__originalId}}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-lg-12 well well-sm mb-0">
+                                                <h1>{{this.apiName}}
+                                                </h1>
+                                                <hr>
+                                                <div class="row py-2">
+                                                    <div class="col-lg-6">
+                                                        <h6><strong class="pr-3">Name </strong>{{this.apiName}}</h6>
+                                                        <h6><strong class="pr-3">Status </strong><span
+                                                                class="success">{{this.status}}</span></h6>
+                                                        <h6><strong class="pr-3">Method </strong>{{this.getOrPost}}</h6>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <h6><strong class="pr-3">URL </strong>{{this.apiAddress}}</h6>
+                                                        <h6><strong class="pr-3">Frequency </strong>{{this.frequency}}
+                                                        </h6>
+                                                        {{#if this.updatedTime}} <h6><strong class="pr-3">Last
+                                                                updated</strong>{{this.updatedTime}} </h6>{{/if}}
+                                                    </div>
+                                                </div>
+                                                <div class="row chart-wrapper my-3">
+                                                    <div class="col-lg-12">
+                                                        <canvas id="statusChart-{{this.__originalId}}"
+                                                            height="80"></canvas>
+                                                    </div>
+                                                </div>
+                                                <div class="row py-2">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group py-3">
+                                                            <div class="form-horizontal">
+                                                                <label for="formGroupExampleInput2">Update
+                                                                    frequency:</label>
+                                                                <br>
+                                                                <div class="btn-group" role="group"
+                                                                    aria-label="First group">
+                                                                    {{#if $neq this.frequency 'every 30 seconds'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 30 seconds,{{this.__originalId}}">30
+                                                                        seconds</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        30
+                                                                        seconds</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 1 minute'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 1 minute,{{this.__originalId}}">1
+                                                                        minute</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        1
+                                                                        minute</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 15 minutes'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 15 minutes,{{this.__originalId}}">15
+                                                                        minutes</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        15
+                                                                        minutes</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 30 minutes'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 30 minutes,{{this.__originalId}}">30
+                                                                        minutes</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        30
+                                                                        minutes</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 1 hour'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 1 hour,{{this.__originalId}}">1
+                                                                        hour</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        1
+                                                                        hour</button>
+                                                                    {{/if}}
+                                                                    {{#if $neq this.frequency 'every 3 hours'}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        id="frequencyButton"
+                                                                        data-value="every 3 hours,{{this.__originalId}}">3
+                                                                        hours</button>
+                                                                    {{else}}
+                                                                    <button type="button" class="btn btn-default"
+                                                                        disabled>Current:
+                                                                        3
+                                                                        hours</button>
+                                                                    {{/if}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-lg-12 well well-sm mb-0">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <h1>Recent Checks</h1>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Started At</th>
+                                                                    <th>Finished At</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="history-{{this.__originalId}}">
+                                                                {{croneData}}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-lg-12 well well-sm mb-0">
+                                                <h1>Uptime and Downtime</h1>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-lg-6">
+                                                    <input class="up-chart-api w-100" id="upTime-{{this.__originalId}}"
+                                                        value="{{this.__originalId}}" hidden>
+                                                    <canvas id="upTimeChart-{{this.__originalId}}"></canvas>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <input class="down-chart-api w-100"
+                                                        id="downTime-{{this.__originalId}}"
+                                                        value="{{this.__originalId}}" hidden>
+                                                    <canvas id="downTimeChart-{{this.__originalId}}"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- edit modal of sidebar-->
+                        <div class="modal fade editProperty-{{__originalId}}" tabindex="-1" role="dialog"
+                            aria-labelledby="editProperty" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content py-4">
+                                    <div class="modal-header">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <h4>Edit API Details</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <form>
+                                                        <div class="form-group">
+                                                            <input class="form-control py-4"
+                                                                id="apiName-{{__originalId}}" placeholder="API Name"
+                                                                required value="">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="updatingFrequency">Frequency</label>
+                                                            <select id="updatingFrequency-{{__originalId}}"
+                                                                class="selectpicker form-control">
+                                                                <option>every 30 seconds</option>
+                                                                <option>every 15 minutes</option>
+                                                                <option>every 30 minutes</option>
+                                                                <option>every 1 hour</option>
+                                                                <option>every 3 hours</option>
+                                                            </select>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                                    <button type="button" class="btn btn-close float-left"
+                                                        data-dismiss="modal">Close</button>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                                    <button class="btn btn-add__website px-5" id="edit-api"
+                                                        value="{{__originalId}}">Edit</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end of edit modal -->
+                        {{/if}}
+                        {{/EasySearch.Each}}
+                        {{#EasySearch.IfNoResults index=apiIndex}}
+                        <div>No results found!</div>
+                        {{/EasySearch.IfNoResults}}
+                    </div>
+                    {{/if}}
+                    <!-- End of Admin API -->
                 </div>
             </div>
         </div>

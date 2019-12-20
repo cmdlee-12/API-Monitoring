@@ -185,7 +185,8 @@ Template.apiList.events({
       var frequency = b.options[b.selectedIndex].text;
       var propertyID = Router.current().params.id;
       var isProperty = "0";
-      Meteor.call("updateApi", apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
+      var userID = Meteor.userId();
+      Meteor.call("updateApi", userID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
         if (apiName === "") {
           toastr.error("API Name field is required", 'Error');
         }
@@ -200,7 +201,7 @@ Template.apiList.events({
           //remove field's value
           $("#formGroupExampleInput").val("");
           $("#formGroupExampleInput2").val("");
-          
+
           //add uptime
           var apiData = apiAddress.find({
             apiAddress: apiAddress1
@@ -338,9 +339,12 @@ Template.apiList.events({
       try {
         final.push({
           updatedTime: apiAddress1[i].updatedTime,
-          propertyName: apiAddress1[i].propertyName
+          propertyName: apiAddress1[i].propertyName,
+          apiName: apiAddress1[i].apiName
         })
-
+        //set sidenav name
+        $("#apiContainerName").html(final[i].apiName);
+        
         //set form values
         $("#propertyName-" + propertyID).val(final[i].propertyName);
 

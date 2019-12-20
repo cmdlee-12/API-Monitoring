@@ -10,10 +10,12 @@
                         <h1 class="breadcrumb-title2 mt-2"><a href="/error"><img src="/icons/error.png" alt="error"
                                     class="img-fluid">Error Reports</a></h1>
                     </div>
+                    {{#if $eq currentUser.profile.role 'Client'}}
                     <div class="col-wrapper">
                         <h1 class="breadcrumb-title2 mt-2"><a href="/starred"><img src="/icons/starred.png"
                                     alt="starred" class="img-fluid">Starred</a></h1>
                     </div>
+                    {{/if}}
                     <div class="col-wrapper">
                         <h1 class="breadcrumb-title2 mt-2"><a href="/api"><img src="/icons/error.png" alt="properties"
                                     class="img-fluid">API</a></h1>

@@ -103,11 +103,24 @@ Template.properties.onRendered(function () {
 
     // other functions
     sideBar();
+    addUserOption();
 
     function sideBar() {
         $('.sidebar-toggle img').click(function () {
             $('.content-side__wrapper').toggle();
         })
+    }
+
+    function addUserOption() {
+        var users = Meteor.users.find({}).fetch();
+        var userRes = [];
+        for (var i = 0; i < users.length; i++) {
+            userRes.push({
+                _id: users[i]._id,
+                username: users[i].username
+            });
+            $("#clientName").append("<option value='" + userRes[i]._id + "'>" + userRes[i].username + "</option>");
+        }
     }
 });
 
@@ -130,7 +143,8 @@ Template.properties.events({
             var b = document.getElementById('addingFrequency-' + propertyID);
             var frequency = b.options[b.selectedIndex].text;
             var isProperty = "0";
-            Meteor.call("updateApi", apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
+            var userID = Meteor.userId();
+            Meteor.call("updateApi", userID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
                 if (apiName === "") {
                     toastr.error("API Name field is required", 'Error');
                 }
@@ -180,25 +194,22 @@ Template.properties.events({
     "click #add-property": function (event, template) {
         var name = $('#propertyName').val();
         var url = $('#propertyURL').val();
+        var user = document.getElementById('clientName');
+        var userValue = user.options[user.selectedIndex].value;
+        console.log("Meteor. "+ Meteor.userId());
+        console.log("Selected "+ userValue)
         var isStarred = $('#propertyStarred').is(":checked");
         var urlPattern = new RegExp("^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$");
-        var currentUser = Meteor.userId();
-
         if (name != "" && url != "") {
             if (urlPattern.test(url)) {
-                if (Properties.find({
-                        createdBy: currentUser,
-                        propertyName: name
-                    }).count() > 0) {
-                    toastr.error("Property name already exists", "Duplicate Property");
-                } else if (apiAddress.find({
+                if (apiAddress.find({
                         apiAddress: url
                     }).count() > 0) {
                     toastr.error("Property URL already exists", 'Duplicate URL');
                 } else {
-                    Meteor.call("addProperties", name, url, isStarred, function (error, result) {
+                    Meteor.call("addAdminProperties", userValue, name, url, isStarred, function (error, result) {
                         if (error) {
-                            toastr.error("error", error);
+                            toastr.error("Error", error);
                         } else {
                             toastr.success("You have successfully added a new client!", "Good job!");
                             var name = $('#propertyName').val();
@@ -210,7 +221,7 @@ Template.properties.events({
                             var isProperty = "1";
 
                             var properties = Properties.find({
-                                propertyName: name
+                                propertyURL: url
                             }).fetch();
                             var propertyID = [];
                             for (var i = 0; i < properties.length; i++) {
@@ -218,7 +229,8 @@ Template.properties.events({
                                     _id: properties[i]._id
                                 })
                             }
-                            Meteor.call("updateApi", name, url, getOrPost, usageOrStatus, authentication, frequency, propertyID[0]._id, isProperty, function (error, result) {
+                            console.log(propertyID[0]._id)
+                            Meteor.call("updateApi", userValue, name, url, getOrPost, usageOrStatus, authentication, frequency, propertyID[0]._id, isProperty, function (error, result) {
                                 if (error) {
                                     toastr.error(JSON.stringify(result, null, "\t"), '1Error');
                                 } else {
@@ -251,12 +263,10 @@ Template.properties.events({
                                                                                         toastr.error(JSON.stringify(error, null, "\t"), '4Error');
                                                                                     } else {
                                                                                         setTimeout(function () {
+                                                                                            console.log("up"+id)
                                                                                             Meteor.call("getUpDownTime", id, function (error, result) {
                                                                                                 if (error) {
                                                                                                     toastr.error(JSON.stringify(error, null, "\t"), '5Error');
-                                                                                                }
-                                                                                                if (result) {
-                                                                                                    toastr.error(JSON.stringify(result, null, "\t"), '6Error');
                                                                                                 }
                                                                                                 Tracker.autorun(function () {
                                                                                                     if (upDownTimeChart.ready()) {
@@ -531,6 +541,10 @@ Template.properties.events({
                 propertyName: userProperties[i].propertyName,
                 isStarred: userProperties[i].isStarred
             })
+
+            //set sidenav name
+            $("#propName").html(result[i].propertyName);
+
             //set form values
             $("#propertyName-" + propertyID).val(result[i].propertyName);
             $("#propertyURL-" + propertyID).val(result[i].propertyURL);

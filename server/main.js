@@ -41,7 +41,7 @@ Meteor.users.allow({
 Meteor.startup(() => {
 
   // code to run on server at startup
-  process.env.MAIL_URL = "smtp://apikey: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:465"; //only change 'yourApiKey' and the port(if required)
+  process.env.MAIL_URL = "smtp://apikey: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@smtp.sendgrid.net:2525"; //only change 'yourApiKey' and the port(if required)
 
   FutureTasks.find().forEach(function (task) {
     Meteor.call("addStatusCheck", task.apiId, task.frequency, task.createdBy);
@@ -274,10 +274,210 @@ Meteor.methods({
       isStarred: isStarred
     });
   },
-  'updateApi': function (name, address, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty) {
+  'addAdminProperties': function (userValue, name, url, isStarred) {
+    Properties.insert({
+      createdBy: userValue,
+      propertyName: name,
+      propertyURL: url,
+      isStarred: isStarred
+    });
+  },
+  'addAdminApi': function (clientName, clientID, propertyName, propertyValue, name, address, getOrPost, usageOrStatus, authentication, frequency, isProperty) {
     console.dir(address);
     console.dir(authentication);
-    var currentUser = Meteor.userId();
+    var username = Meteor.users.findOne({
+      _id: clientID
+    }).username;
+
+    var propertyName = [];
+    var property = Properties.find({
+      _id: propertyValue
+    }).fetch();
+
+    for (var i = 0; i < property.length; i++) {
+      propertyName.push({
+        name: property[i].propertyName,
+        url: property[i].propertyURL
+      })
+    }
+
+    if (apiAddress.find({
+        createdBy: clientID,
+        apiAddress: address
+      }).count() > 0) {
+      return "You have used this API url for a different API already";
+    } else {
+      addingApiSearch.insert({
+        createdBy: clientID
+      });
+
+      if (getOrPost === "GET") {
+        try {
+          var res = [];
+          var responseTime;
+          if (authentication) {
+            var start = new Date();
+            res = HTTP.get(address, {
+              auth: authentication
+            });
+            responseTime = new Date() - start;
+            var postingTime = moment(start).format("MMM Do YYYY, h:mm:ss a");
+            try {
+              apiAddress.insert({
+                createdByName: clientName,
+                createdBy: clientID,
+                apiName: name,
+                apiAddress: address,
+                authentication: authentication,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: res.data,
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime,
+                propertyID: propertyValue,
+                propertyName: propertyName[0].name,
+                propertyURL: propertyName[0].url,
+                isProperty: isProperty
+              });
+
+            } catch (err) {
+              apiAddress.insert({
+                createdByName: clientName,
+                createdBy: clientID,
+                apiName: name,
+                apiAddress: address,
+                authentication: authentication,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: "Response was too long.",
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime,
+                propertyID: propertyValue,
+                propertyName: propertyName[0].name,
+                propertyURL: propertyName[0].url,
+                isProperty: isProperty
+              });
+            }
+          } else {
+            var start = new Date();
+            res = HTTP.get(address);
+            responseTime = new Date() - start;
+            var postingTime = moment(start).format("MMM Do YYYY, h:mm:ss a");
+            try {
+              apiAddress.insert({
+                createdByName: clientName,
+                createdBy: clientID,
+                apiName: name,
+                apiAddress: address,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: res.data,
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime,
+                propertyID: propertyValue,
+                propertyName: propertyName[0].name,
+                isProperty: isProperty
+              });
+
+            } catch (err) {
+              apiAddress.insert({
+                createdByName: clientName,
+                createdBy: clientID,
+                apiName: name,
+                apiAddress: address,
+                getOrPost: getOrPost,
+                usageOrStatus: usageOrStatus,
+                response: "Response was too long.",
+                updatedTime: postingTime,
+                headers: res.headers,
+                status: "pass",
+                frequency: frequency,
+                responseTime: responseTime,
+                propertyID: propertyValue,
+                propertyName: propertyName[0].name,
+                isProperty: isProperty
+              });
+            }
+          }
+          if (apiAddress.find({
+              createdBy: clientID
+            }).count() === 1) {
+            var start = new Date();
+            if (apiErrors.find({
+                createdBy: clientID
+              }).count === 0) {
+              apiErrors.insert({
+                createdBy: clientID
+              });
+            }
+            Meteor.call("overallErrorChecker", clientID);
+            Meteor.call("resetIndividualGraphs", clientID);
+            individualGraphsTasks.remove({
+              createdBy: clientID
+            });
+            individualGraphsTasks.insert({
+              createdBy: clientID,
+              lastReset: start
+            });
+            overallGraphsTasks.remove({
+              createdBy: clientID
+            });
+            overallGraphsTasks.insert({
+              createdBy: clientID
+            });
+          }
+          //console.dir(res.statusCode); if you want to show the status code of the API call
+        } catch (err) {
+          addingApiSearch.remove({
+            createdBy: clientID
+          });
+          console.log("Error: ", err);
+
+          return err.response.content;
+        }
+        addingApiSearch.remove({
+          createdBy: clientID
+        });
+        var apiId = apiAddress.findOne({
+          createdBy: clientID,
+          apiName: name,
+          apiAddress: address
+        })._id;
+        Meteor.call('apiRefresher', frequency, apiId, clientID);
+        FutureTasks.insert({
+          createdBy: clientID,
+          frequency: "Every 1 hour",
+          apiId: apiId
+        });
+      } else {
+        var res = HTTP.post(address);
+        apiAddress.insert({
+          createdByName: username,
+          createdBy: clientID,
+          apiName: name,
+          apiAddress: address,
+          getOrPost: getOrPost,
+          usageOrStatus: usageOrStatus,
+          path: path,
+          response: res.data
+        });
+      }
+    }
+
+  },
+  'updateApi': function (id, name, address, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty) {
+    console.dir(address);
+    console.dir(authentication);
+    var currentUser = id;
     var username = Meteor.users.findOne({
       _id: currentUser
     }).username;
@@ -445,7 +645,7 @@ Meteor.methods({
           apiName: name,
           apiAddress: address
         })._id;
-        Meteor.call('apiRefresher', frequency, apiId);
+        Meteor.call('apiRefresher', frequency, apiId, currentUser);
         FutureTasks.insert({
           createdBy: currentUser,
           frequency: frequency,
@@ -465,59 +665,6 @@ Meteor.methods({
         });
       }
     }
-
-  },
-  'updatePropertyAPI': function (id, name) {
-    apiAddress.update({
-      _id: id
-    }, {
-      $set: {
-        apiName: name,
-      }
-    })
-  },
-  'getLastRunAPI': function (id) {
-    var apiAddress1 = apiAddress.find({
-      _id: id
-    }).fetch();
-    var final = [];
-    for (var i = 0; i < apiAddress1.length; i++) {
-      final.push({
-        updatedTime: apiAddress1[i].updatedTime
-      })
-    }
-    apiAddress.update({
-      _id: id
-    }, {
-      $set: {
-        updatedTime: final[0].updatedTime
-      }
-    })
-  },
-  'updateProfile': function (user_id, title, firstName, lastName, email, phone, country) {
-    var user_title_name = title+" "+firstName+" "+lastName;
-    Meteor.users.update({
-      _id: user_id
-    }, {
-      $set: {
-        username: user_title_name,
-        "profile.title":title,
-        "profile.firstName":firstName,
-        "profile.lastName":lastName,
-        "profile.phone": phone,
-        "profile.country":country,
-        "emails.0.address": email
-      }
-    });
-  },
-  'removeApi': function (id) {
-    apiAddress.remove({
-      _id: id
-    });
-    FutureTasks.remove({
-      apiId: id
-    });
-    SyncedCron.remove(id);
 
   },
   'resetIndividualGraphs': function (currentUser) {
@@ -666,15 +813,67 @@ Meteor.methods({
       }
     });
   },
-  'apiRefresher': function (frequency, apiId) {
+  'apiRefresher': function (frequency, apiId, currentID) {
     console.dir("Adding api for status checks");
     var currentUser = Meteor.userId();
     var username = ((Meteor.user()).username);
     var email = (Meteor.user().emails[0].address);
-    Meteor.call("addStatusCheck", apiId, frequency, currentUser);
+    Meteor.call("addStatusCheck", apiId, frequency, currentID);
 
   },
+  'updatePropertyAPI': function (id, name) {
+    apiAddress.update({
+      _id: id
+    }, {
+      $set: {
+        apiName: name,
+      }
+    })
+  },
+  'getLastRunAPI': function (id) {
+    var apiAddress1 = apiAddress.find({
+      _id: id
+    }).fetch();
+    var final = [];
+    for (var i = 0; i < apiAddress1.length; i++) {
+      final.push({
+        updatedTime: apiAddress1[i].updatedTime
+      })
+    }
+    apiAddress.update({
+      _id: id
+    }, {
+      $set: {
+        updatedTime: final[0].updatedTime
+      }
+    })
+  },
+  'updateProfile': function (user_id, title, firstName, lastName, email, phone, country) {
+    var user_title_name = title + " " + firstName + " " + lastName;
+    Meteor.users.update({
+      _id: user_id
+    }, {
+      $set: {
+        username: user_title_name,
+        "profile.title": title,
+        "profile.firstName": firstName,
+        "profile.lastName": lastName,
+        "profile.phone": phone,
+        "profile.country": country,
+        "emails.0.address": email
+      }
+    });
+  },
+  'removeApi': function (id) {
+    apiAddress.remove({
+      _id: id
+    });
+    FutureTasks.remove({
+      apiId: id
+    });
+    SyncedCron.remove(id);
 
+  },
   'addStatusCheck': function (apiId, frequency, currentUser) {
     console.dir(frequency);
     SyncedCron.add({
@@ -690,7 +889,6 @@ Meteor.methods({
       }
     });
   },
-
   'checkStatus': function (apiId, currentUser) {
     console.dir("checking status");
     var api = apiAddress.findOne({

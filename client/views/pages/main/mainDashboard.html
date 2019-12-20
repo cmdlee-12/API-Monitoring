@@ -18,10 +18,83 @@
           <div class="row align-items-center px-5 py-5">
             <div class="col-lg-6">
               <div class="row align-items-center">
-                <div class="col-lg-3">
+                <div class="col-lg-3" data-toggle="modal" data-target=".createReport">
+                  <button class="btn button-light"><img src="/icons/filter.png" class="img-fluid" alt="filter">Filter</button>
+                </div>
+                <!-- createReport -->
+                <div class="modal fade createReport" tabindex="-1" role="dialog" aria-labelledby="createReport"
+                  aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content py-4">
+                      <div class="modal-header">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <h4>Create Report</h4>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <form>
+                                <div class="col-lg-12 form-group">
+                                  <label for="adminPropertyName">Property Name</label>
+                                  <select name="adminPropertyName" id="adminPropertyName" class="form-control py-4">
+                                  </select>
+                                </div>
+                                <div class="col-lg-12 form-group">
+                                  <label for="adminPropertyName">Website / API</label>
+                                  <select name="websiteAPI" id="websiteAPI" class="form-control py-4">
+                                    <option selectedvalue="website">Website</option>
+                                    <option value="API">API</option>
+                                  </select>
+                                </div>
+                                <div class="col-lg-12 form-group">
+                                  <label for="Report">Report</label>
+                                  <select class="filters form-control">
+                                    <option selected value="performance">Performance</option>
+                                    <option value="checkHistory">Check History</option>
+                                    <option value="alertHistory">Alert History</option>
+                                    <option value="uptimeHistory">Uptime History</option>
+                                  </select>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                  <label for="adminPropertyName"></label>
+                                  <input class="form-control py-4" id="adminFrom" placeholder="From" required>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                  <label for="adminPropertyName"></label>
+                                  <input class="form-control py-4" id="adminTo" placeholder="To" required>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                              <button type="button" class="btn btn-close float-left"
+                                data-dismiss="modal">Close</button>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                              <button class="btn btn-add__website px-5" id="generateReport">Generate Report</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- createreport -->
+                <!-- <div class="col-lg-3">
                   <button class="btn button-light"><img src="/icons/filter.png" class="img-flui" alt="filter">
                     Filter</button>
-                </div>
+                </div> -->
                 <div class="col-lg-5">
                   <div class="form-group mb-0">
                     <select class="filters form-control">
@@ -92,19 +165,20 @@
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn">&times;</a>
             <div class="container">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="row mb-5">
-                    <div class="col-lg-12 px-0 ">
-                      <h4 class="data-title text-left">Performance</h4>
-                    </div>
-                  </div>
-                  <div class="row mb-5">
-                    <div class="col-lg-12 px-0">
-                      <div class="performance-wrapper">
-                        <canvas id="statusChart"></canvas>
-                      </div>
-                    </div>
+              <div class="row mb-5">
+                <div class="col-lg-12 px-0">
+                  <h4 class="data-title text-left" id="propName"></h4>
+                </div>
+              </div>
+              <div class="row mb-5">
+                <div class="col-lg-12 px-0">
+                  <h4 class="data-title text-left">Performance</h4>
+                </div>
+              </div>
+              <div class="row mb-5">
+                <div class="col-lg-12 px-0">
+                  <div class="performance-wrapper">
+                    <canvas id="statusChart"></canvas>
                   </div>
                 </div>
               </div>
