@@ -143,16 +143,18 @@ Template.properties.events({
             var b = document.getElementById('addingFrequency-' + propertyID);
             var frequency = b.options[b.selectedIndex].text;
             var isProperty = "0";
+            var createdBy = document.getElementById("createdBy-"+ propertyID).value;
+            console.log(createdBy)
             var userID = Meteor.userId();
-            Meteor.call("updateApi", userID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
+            Meteor.call("updateApi", createdBy, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty, function (error, result) {
                 if (apiName === "") {
-                    toastr.error("API Name field is required", 'Error');
+                    toastr.error("API Name field is required", 'Error1');
                 }
                 if (apiAddress1 === "") {
-                    toastr.error("API Endpoint field is required", 'Error');
+                    toastr.error("API Endpoint field is required", 'Error2');
                 }
                 if (error) {
-                    toastr.error(JSON.stringify(result, null, "\t"), 'Error');
+                    toastr.error(JSON.stringify(error, null, "\t"), 'Error3');
                 } else {
                     toastr.success("API successfully added!", "Sucess")
 
@@ -180,10 +182,7 @@ Template.properties.events({
                     setTimeout(function () {
                         Meteor.call("getUpDownTimeAPI", final[0]._id, function (error, result) {
                             if (error) {
-                                toastr.error(JSON.stringify(error, null, "\t"), '5Error');
-                            }
-                            if (result) {
-                                toastr.error(JSON.stringify(result, null, "\t"), '6Error');
+                                toastr.error(JSON.stringify(error, null, "\t"), 'Uptime/Downtime Error');
                             }
                         });
                     }, 30000);

@@ -188,15 +188,13 @@ Template.api.events({
 
       //get client & property name, id
       var client = document.getElementById("clientName");
-      var clientName = client.options[client.selectedIndex].text;
       var clientID = client.options[client.selectedIndex].value;
 
       var property = document.getElementById("propertyName");
-      var propertyName = property.options[property.selectedIndex].text;
       var propertyValue = property.options[property.selectedIndex].value;
 
       var isProperty = "0";
-      Meteor.call("addAdminApi", clientName, clientID, propertyName, propertyValue, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, isProperty, function (error, result) {
+      Meteor.call("updateApi",  clientID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyValue, isProperty, function (error, result) {
         if (apiName === "") {
           toastr.error("API Name field is required", 'Error');
         }

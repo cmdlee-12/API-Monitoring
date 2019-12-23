@@ -104,6 +104,7 @@ Template.mainDashboard.onRendered(function () {
   // other functions
   sideBar();
   propertyOption();
+  addUserOption();
   
   function sideBar() {
     $('.sidebar-toggle img').click(function () {
@@ -123,6 +124,18 @@ Template.mainDashboard.onRendered(function () {
       $("#adminPropertyName").append("<option value='" + propertiesRes[i]._id + "'>" + propertiesRes[i].propertyName + "</option>");
     }
   }
+
+  function addUserOption() {
+    var users = Meteor.users.find({}).fetch();
+    var userRes = [];
+    for (var i = 0; i < users.length; i++) {
+        userRes.push({
+            _id: users[i]._id,
+            username: users[i].username
+        });
+        $("#clientName").append("<option value='" + userRes[i]._id + "'>" + userRes[i].username + "</option>");
+    }
+}
 });
 
 
@@ -195,151 +208,146 @@ Template.mainDashboard.events({
   "click #add-property": function (event, template) {
     var name = $('#propertyName').val();
     var url = $('#propertyURL').val();
+    var user = document.getElementById('clientName');
+    var userValue = user.options[user.selectedIndex].value;
+    console.log("Meteor. "+ Meteor.userId());
+    console.log("Selected "+ userValue)
     var isStarred = $('#propertyStarred').is(":checked");
     var urlPattern = new RegExp("^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$");
-    var currentUser = Meteor.userId();
-
     if (name != "" && url != "") {
-      if (urlPattern.test(url)) {
-        if (Properties.find({
-            createdBy: currentUser,
-            propertyName: name
-          }).count() > 0) {
-          toastr.error("Property name already exists", "Duplicate Property");
-        } else if (apiAddress.find({
-            apiAddress: url
-          }).count() > 0) {
-          toastr.error("Property URL already exists", 'Duplicate URL');
-        } else {
-          Meteor.call("addProperties", name, url, isStarred, function (error, result) {
-            if (error) {
-              toastr.error("error", error);
+        if (urlPattern.test(url)) {
+            if (apiAddress.find({
+                    apiAddress: url
+                }).count() > 0) {
+                toastr.error("Property URL already exists", 'Duplicate URL');
             } else {
-              toastr.success("You have successfully added a new client!", "Good job!");
-              var name = $('#propertyName').val();
-              var url = $('#propertyURL').val();
-              var getOrPost = "GET";
-              var usageOrStatus = "Status";
-              var authentication = "";
-              var frequency = "every 30 seconds";
-              var isProperty = "1";
-              var userID = Meteor.userId();
-
-              var properties = Properties.find({
-                propertyName: name
-              }).fetch();
-              var propertyID = [];
-              for (var i = 0; i < properties.length; i++) {
-                propertyID.push({
-                  _id: properties[i]._id
-                })
-              }
-              Meteor.call("updateApi", userID, name, url, getOrPost, usageOrStatus, authentication, frequency, propertyID[0]._id, isProperty, function (error, result) {
-                if (error) {
-                  toastr.error(JSON.stringify(result, null, "\t"), '1Error');
-                } else {
-                  Meteor.call("getLastRun", propertyID[0]._id, function (error, result) {
+                Meteor.call("addAdminProperties", userValue, name, url, isStarred, function (error, result) {
                     if (error) {
-                      toastr.error(JSON.stringify(error, null, "\t"), '2Error');
+                        toastr.error("Error", error);
                     } else {
-                      Meteor.call("getStatus", propertyID[0]._id, url, function (error, result) {
-                        if (error) {
-                          toastr.error(JSON.stringify(error, null, "\t"), '3Error');
-                        } else {
-                          loadClient(propertyID[0]._id, url);
+                        toastr.success("You have successfully added a new client!", "Good job!");
+                        var name = $('#propertyName').val();
+                        var url = $('#propertyURL').val();
+                        var getOrPost = "GET";
+                        var usageOrStatus = "Status";
+                        var authentication = "";
+                        var frequency = "every 30 seconds";
+                        var isProperty = "1";
 
-                          function loadClient(propertyID, url) {
-                            gapi.client.setApiKey("AIzaSyDuNP8vCo87mQ4RwWl0RVvN9mFXKSHmF48");
-                            return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/pagespeedonline/v4/rest")
-                              .then(function () {
-                                  var propertyURL = url;
-                                  var id = propertyID;
-                                  return gapi.client.pagespeedonline.pagespeedapi.runpagespeed({
-                                      "url": propertyURL,
-                                      "filter_third_party_resources": true,
-                                      "screenshot": true,
-                                      "snapshots": true,
-                                      "strategy": "desktop"
-                                    })
-                                    .then(function (response) {
-                                        Meteor.call("getPageSpeed", id, response.result.ruleGroups.SPEED.score, function (error, result) {
-                                          if (error) {
-                                            toastr.error(JSON.stringify(error, null, "\t"), '4Error');
-                                          } else {
-                                            setTimeout(function () {
-                                              Meteor.call("getUpDownTime", id, function (error, result) {
-                                                if (error) {
-                                                  toastr.error(JSON.stringify(error, null, "\t"), '5Error');
+                        var properties = Properties.find({
+                            propertyURL: url
+                        }).fetch();
+                        var propertyID = [];
+                        for (var i = 0; i < properties.length; i++) {
+                            propertyID.push({
+                                _id: properties[i]._id
+                            })
+                        }
+                        console.log(propertyID[0]._id)
+                        Meteor.call("updateApi", userValue, name, url, getOrPost, usageOrStatus, authentication, frequency, propertyID[0]._id, isProperty, function (error, result) {
+                            if (error) {
+                                toastr.error(JSON.stringify(result, null, "\t"), '1Error');
+                            } else {
+                                Meteor.call("getLastRun", propertyID[0]._id, function (error, result) {
+                                    if (error) {
+                                        toastr.error(JSON.stringify(error, null, "\t"), '2Error');
+                                    } else {
+                                        Meteor.call("getStatus", propertyID[0]._id, url, function (error, result) {
+                                            if (error) {
+                                                toastr.error(JSON.stringify(error, null, "\t"), '3Error');
+                                            } else {
+                                                loadClient(propertyID[0]._id, url);
+
+                                                function loadClient(propertyID, url) {
+                                                    gapi.client.setApiKey("AIzaSyDuNP8vCo87mQ4RwWl0RVvN9mFXKSHmF48");
+                                                    return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/pagespeedonline/v4/rest")
+                                                        .then(function () {
+                                                                var propertyURL = url;
+                                                                var id = propertyID;
+                                                                return gapi.client.pagespeedonline.pagespeedapi.runpagespeed({
+                                                                        "url": propertyURL,
+                                                                        "filter_third_party_resources": true,
+                                                                        "screenshot": true,
+                                                                        "snapshots": true,
+                                                                        "strategy": "desktop"
+                                                                    })
+                                                                    .then(function (response) {
+                                                                            Meteor.call("getPageSpeed", id, response.result.ruleGroups.SPEED.score, function (error, result) {
+                                                                                if (error) {
+                                                                                    toastr.error(JSON.stringify(error, null, "\t"), '4Error');
+                                                                                } else {
+                                                                                    setTimeout(function () {
+                                                                                        console.log("up"+id)
+                                                                                        Meteor.call("getUpDownTime", id, function (error, result) {
+                                                                                            if (error) {
+                                                                                                toastr.error(JSON.stringify(error, null, "\t"), '5Error');
+                                                                                            }
+                                                                                            Tracker.autorun(function () {
+                                                                                                if (upDownTimeChart.ready()) {
+                                                                                                    var updownChartLength = $(".updown-chart").length;
+                                                                                                    var chart = $(".updown-chart");
+                                                                                                    for (var i = 0; i < updownChartLength; i++) {
+                                                                                                        var propertiesdata = Properties.find({
+                                                                                                            _id: chart[i].value
+                                                                                                        });
+                                                                                                        var dataupTime = [];
+                                                                                                        var dataDown = [];
+                                                                                                        propertiesdata.forEach(function (option) {
+
+                                                                                                            dataupTime.push(option.uptime);
+                                                                                                            dataDown.push(option.downtime)
+                                                                                                        });
+
+                                                                                                        drawchart(chart[i].value, dataupTime, dataDown);
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+                                                                                        });
+                                                                                    }, 30000);
+                                                                                }
+                                                                                if (result) {
+                                                                                    toastr.error(JSON.stringify(result, null, "\t"), '7Error');
+                                                                                }
+                                                                            });
+                                                                        },
+                                                                        function (err) {
+                                                                            toastr.error("Execute error", err);
+                                                                        });
+                                                            },
+                                                            function (err) {
+                                                                toastr.error("Error loading GAPI client for API" + err, "Page speed error");
+                                                            });
                                                 }
-                                                if (result) {
-                                                  toastr.error(JSON.stringify(result, null, "\t"), '6Error');
-                                                }
-                                                Tracker.autorun(function () {
-                                                  if (upDownTimeChart.ready()) {
-                                                    var updownChartLength = $(".updown-chart").length;
-                                                    var chart = $(".updown-chart");
-                                                    for (var i = 0; i < updownChartLength; i++) {
-                                                      var propertiesdata = Properties.find({
-                                                        _id: chart[i].value
-                                                      });
-                                                      var dataupTime = [];
-                                                      var dataDown = [];
-                                                      propertiesdata.forEach(function (option) {
-
-                                                        dataupTime.push(option.uptime);
-                                                        dataDown.push(option.downtime)
-                                                      });
-
-                                                      drawchart(chart[i].value, dataupTime, dataDown);
-                                                    }
-                                                  }
-                                                });
-                                              });
-                                            }, 30000);
-                                          }
-                                          if (result) {
-                                            toastr.error(JSON.stringify(result, null, "\t"), '7Error');
-                                          }
+                                                gapi.load("client");
+                                            }
+                                            if (result) {
+                                                toastr.error(JSON.stringify(result, null, "\t"), '8Error');
+                                            }
                                         });
-                                      },
-                                      function (err) {
-                                        toastr.error("Execute error", err);
-                                      });
-                                },
-                                function (err) {
-                                  toastr.error("Error loading GAPI client for API" + err, "Page speed error");
+                                    }
+                                    if (result) {
+                                        toastr.error(JSON.stringify(result, null, "\t"), '9Error');
+                                    }
                                 });
-                          }
-                          gapi.load("client");
-                        }
-                        if (result) {
-                          toastr.error(JSON.stringify(result, null, "\t"), '8Error');
-                        }
-                      });
+                            }
+                            if (result) {
+                                toastr.error(JSON.stringify(result, null, "\t"), '10Error');
+                            }
+                        });
+                        $('#propertyName').val("");
+                        $('#propertyURL').val("");
                     }
-                    if (result) {
-                      toastr.error(JSON.stringify(result, null, "\t"), '9Error');
-                    }
-                  });
-                }
-                if (result) {
-                  toastr.error(JSON.stringify(result, null, "\t"), '10Error');
-                }
-              });
-              $('#propertyName').val("");
-              $('#propertyURL').val("");
+                });
+
+
             }
-          });
-
-
+        } else {
+            toastr.error("Please enter a valid URL", "Invalid URL");
         }
-      } else {
-        toastr.error("Please enter a valid URL", "Invalid URL");
-      }
     } else {
-      toastr.error("Fill up the required fields", "Required Fields");
+        toastr.error("Fill up the required fields", "Required Fields");
     }
-  },
+},
   "click #removeApi": function (event, template) {
     result = event.currentTarget.dataset.value;
     Meteor.call("removeApi", result, function (error, result) {
