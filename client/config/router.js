@@ -73,3 +73,8 @@ Router.route('/Properties', function () {
     this.render('properties');
     this.layout('mainLayout');
 });
+
+Router.route('/Reports', function () {
+    this.render('reports');
+    this.layout('mainLayout');
+});

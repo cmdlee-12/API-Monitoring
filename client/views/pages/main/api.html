@@ -35,108 +35,207 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            {{#if $eq currentUser.profile.role 'Administrator'}}
-                            <button class="btn btn-add__website float-right btn-lg" data-toggle="modal"
-                                data-target=".addApi"><i class="fas fa-plus"></i> Add API</button>
-                            <!-- add api modal -->
-                            <div class="modal fade addApi" tabindex="-1" role="dialog" aria-labelledby="addAPI"
-                                aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content py-4">
-                                        <div class="modal-header">
-                                            <div class="container">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <h4>Add Property Details</h4>
+                            <div class="row justify-content-end float-right">
+                                <div class="col-lg-6">
+                                    {{#if $eq currentUser.profile.role 'Administrator'}}
+                                    <button class="btn btn-add__website float-right btn-lg" data-toggle="modal"
+                                        data-target=".addApi"><i class="fas fa-plus"></i> Add API</button>
+                                    <!-- add api modal -->
+                                    <div class="modal fade addApi" tabindex="-1" role="dialog" aria-labelledby="addAPI"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content py-4">
+                                                <div class="modal-header">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <h4>Add Property Details</h4>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="container">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <form>
-                                                            <div class="form-group">
-                                                                <label for="clientName">Client Name</label>
-                                                                <select name="clientName" id="clientName"
-                                                                    class="form-control py-4">
+                                                <div class="modal-body">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <form>
+                                                                    <div class="form-group">
+                                                                        <label for="clientName">Client Name</label>
+                                                                        <select name="clientName" id="clientName"
+                                                                            class="form-control py-4">
 
-                                                                </select>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="propertyName">Property Name</label>
-                                                                <select name="propertyName" id="propertyName"
-                                                                    class="form-control py-4">
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="propertyName">Property Name</label>
+                                                                        <select name="propertyName" id="propertyName"
+                                                                            class="form-control py-4">
 
-                                                                </select>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="formGroupExampleInput">API
+                                                                            Name</label>
+                                                                        <input class="form-control"
+                                                                            id="formGroupExampleInput"
+                                                                            placeholder="Name" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="formGroupExampleInput2">API Access
+                                                                            Url</label>
+                                                                        <input class="form-control"
+                                                                            id="formGroupExampleInput2"
+                                                                            placeholder="Url" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="authorization">Authentication (if
+                                                                            required)</label>
+                                                                        <input class="form-control" id="authorization"
+                                                                            placeholder="username:password">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="getOrPost">API Access</label>
+                                                                        <select class="selectpicker form-control"
+                                                                            id="getOrPost">
+                                                                            <option>GET</option>
+                                                                            <option>POST</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="usageOrStatus">Usage or
+                                                                            Status</label>
+                                                                        <select class="selectpicker form-control"
+                                                                            id="usageOrStatus">
+                                                                            <option>Status</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="addingFrequency">Status update
+                                                                            frequency</label>
+                                                                        <select id="addingFrequency"
+                                                                            class="selectpicker form-control">
+                                                                            <option>every 30 seconds</option>
+                                                                            <option>every 15 minutes</option>
+                                                                            <option>every 30 minutes</option>
+                                                                            <option>every 1 hour</option>
+                                                                            <option>every 3 hours</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </form>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label for="formGroupExampleInput">API Name</label>
-                                                                <input class="form-control" id="formGroupExampleInput"
-                                                                    placeholder="Name" required>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="formGroupExampleInput2">API Access
-                                                                    Url</label>
-                                                                <input class="form-control" id="formGroupExampleInput2"
-                                                                    placeholder="Url" required>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="authorization">Authentication (if
-                                                                    required)</label>
-                                                                <input class="form-control" id="authorization"
-                                                                    placeholder="username:password">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="getOrPost">API Access</label>
-                                                                <select class="selectpicker form-control"
-                                                                    id="getOrPost">
-                                                                    <option>GET</option>
-                                                                    <option>POST</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="usageOrStatus">Usage or Status</label>
-                                                                <select class="selectpicker form-control"
-                                                                    id="usageOrStatus">
-                                                                    <option>Status</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="addingFrequency">Status update
-                                                                    frequency</label>
-                                                                <select id="addingFrequency"
-                                                                    class="selectpicker form-control">
-                                                                    <option>every 30 seconds</option>
-                                                                    <option>every 15 minutes</option>
-                                                                    <option>every 30 minutes</option>
-                                                                    <option>every 1 hour</option>
-                                                                    <option>every 3 hours</option>
-                                                                </select>
-                                                            </div>
-                                                        </form>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <div class="container">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <button type="button" class="btn btn-danger px-3"
-                                                            data-dismiss="modal">Cancel</button>
-                                                        <button type="button" class="btn btn-add__website px-3" id="add"
-                                                            data-dismiss="modal">Add API</button>
+                                                <div class="modal-footer">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <button type="button" class="btn btn-danger px-3"
+                                                                    data-dismiss="modal">Cancel</button>
+                                                                <button type="button" class="btn btn-add__website px-3"
+                                                                    id="add" data-dismiss="modal">Add API</button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- end of add api modal -->
+                                    {{/if}}
+                                </div>
+                                <div class="col-lg-6 pl-0">
+                                    {{#if $eq currentUser.profile.role 'Administrator'}}
+                                    <div class="col-lg-6" data-toggle="modal" data-target=".createReport">
+                                        <button class="btn btn-add__website btn-lg"><i class="fas fa-file-alt"></i>
+                                            Create Report</button>
+                                    </div>
+                                    <!-- createReport -->
+                                    <div class="modal fade createReport" tabindex="-1" role="dialog"
+                                        aria-labelledby="createReport" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content py-4">
+                                                <div class="modal-header">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <h4>Create Report</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <form>
+                                                                    <div class="col-lg-12 form-group">
+                                                                        <label for="adminPropertyName">Property
+                                                                            Name</label>
+                                                                        <select name="adminPropertyName"
+                                                                            id="adminPropertyName"
+                                                                            class="form-control py-4">
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-lg-12 form-group">
+                                                                        <label for="adminPropertyName">Website /
+                                                                            API</label>
+                                                                        <select name="websiteAPI" id="websiteAPI"
+                                                                            class="form-control py-4">
+                                                                            <option selectedvalue="website">Website
+                                                                            </option>
+                                                                            <option value="API">API</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-lg-12 form-group">
+                                                                        <label for="Report">Report</label>
+                                                                        <select class="filters form-control">
+                                                                            <option selected value="performance">
+                                                                                Performance</option>
+                                                                            <option value="checkHistory">Check History
+                                                                            </option>
+                                                                            <option value="alertHistory">Alert History
+                                                                            </option>
+                                                                            <option value="uptimeHistory">Uptime History
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-lg-6 form-group">
+                                                                        <label for="adminPropertyName"></label>
+                                                                        <input class="form-control py-4" id="adminFrom"
+                                                                            placeholder="From" required>
+                                                                    </div>
+                                                                    <div class="col-lg-6 form-group">
+                                                                        <label for="adminPropertyName"></label>
+                                                                        <input class="form-control py-4" id="adminTo"
+                                                                            placeholder="To" required>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <button type="button" class="btn btn-close float-left"
+                                                                    data-dismiss="modal">Close</button>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                <button class="btn btn-add__website px-5"
+                                                                    id="generateReport">Generate Report</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- createreport -->
+                                    {{/if}}
                                 </div>
                             </div>
-                            <!-- end of add api modal -->
-                            {{/if}}
                         </div>
                     </div>
                     <!-- SIDEBAR -->
