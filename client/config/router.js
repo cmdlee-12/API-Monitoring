@@ -74,7 +74,7 @@ Router.route('/Properties', function () {
     this.layout('mainLayout');
 });
 
-Router.route('/Reports', function () {
-    this.render('reports');
+Router.route('/Generate', function () {
+    this.render('generate');
     this.layout('mainLayout');
 });

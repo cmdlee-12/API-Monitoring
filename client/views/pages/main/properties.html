@@ -107,12 +107,13 @@
                                 </div>
                                 <div class="col-lg-6 pl-0">
                                     {{#if $eq currentUser.profile.role 'Administrator'}}
-                                    <div class="col-lg-6" data-toggle="modal" data-target=".createReport">
-                                        <a type="button" href="/reports" class="btn btn-add__website btn-lg"><i class="fas fa-file-alt"></i>
+                                    <div class="col-lg-6">
+                                        <a type="button" href="/generate" class="btn btn-add__website btn-lg"><i
+                                                class="fas fa-file-alt"></i>
                                             Create Report</a>
                                     </div>
                                     <!-- createReport -->
-                                    <div class="modal fade createReport" tabindex="-1" role="dialog"
+                                    <!-- <div class="modal fade createReport" tabindex="-1" role="dialog"
                                         aria-labelledby="createReport" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content py-4">
@@ -182,7 +183,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <!-- createreport -->
                                     {{/if}}
                                 </div>
