@@ -51,7 +51,6 @@ Router.route('/Clients', function () {
 
 Router.route('/Api', function () {
     this.render('api');
-
 });
 
 Router.route('/Starred', function () {
@@ -74,7 +73,6 @@ Router.route('/Properties', function () {
     this.layout('mainLayout');
 });
 
-Router.route('/Generate', function () {
-    this.render('generate');
-    this.layout('mainLayout');
+Router.route('/Report', function () {
+    this.render('report');
 });
