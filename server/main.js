@@ -101,6 +101,22 @@ Meteor.startup(() => {
 });
 
 Meteor.methods({
+  'getCronAPIHistory': function (id){
+    var data = SyncedCron._collection.find({name : id}, {limit: 10}).fetch();
+    var dataArr = [];
+    
+    for(var i = 0; i < data.length; i++){
+      dataArr.push({
+        _id: data[i]._id,
+        name: data[i].name,
+        startedAt: data[i].startedAt,
+        finishedAt: data[i].finishedAt,
+        error: data[i].error,
+        result: data[i].result
+      });
+      return data;
+    }
+  },
   'getCronHistory': function (id){
     var data = SyncedCron._collection.find({name : id}).fetch();
     var dataArr = [];

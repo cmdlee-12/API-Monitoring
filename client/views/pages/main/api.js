@@ -83,14 +83,14 @@ Template.api.onRendered(function () {
           borderColorPerBar.push("#5E5EEC");
         }
         var myChart = new Chart(ctx, {
-          type: 'bar',
+          type: 'line',
           data: {
             labels: days,
             datasets: [{
               label: 'Response Time',
               data: values,
-              backgroundColor: backgroundColorPerBar,
-              borderColor: borderColorPerBar,
+              backgroundColor: "#0FE2FF",
+              borderColor: "#5E5EEC",
               borderWidth: 1
             }]
           },
@@ -194,7 +194,7 @@ Template.api.events({
       var propertyValue = property.options[property.selectedIndex].value;
 
       var isProperty = "0";
-      Meteor.call("updateApi",  clientID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyValue, isProperty, function (error, result) {
+      Meteor.call("updateApi", clientID, apiName, apiAddress1, getOrPost, usageOrStatus, authentication, frequency, propertyValue, isProperty, function (error, result) {
         if (apiName === "") {
           toastr.error("API Name field is required", 'Error');
         }
@@ -301,6 +301,23 @@ Template.api.events({
       }
       if (result) {}
     });
+  },
+  "change #clientName": function (event) {
+
+    $("#propertyName").html("");
+    var clientID = event.target.value;
+
+    var properties = Properties.find({
+      createdBy: clientID
+    }).fetch();
+    var propertiesRes = [];
+    for (var i = 0; i < properties.length; i++) {
+      propertiesRes.push({
+        _id: properties[i]._id,
+        propertyName: properties[i].propertyName
+      });
+      $("#propertyName").append("<option value='" + propertiesRes[i]._id + "'>" + propertiesRes[i].propertyName + "</option>");
+    }
   },
   "click .closebtn": function (event) {
     document.getElementById("mySidenav").style.width = "0";
@@ -417,27 +434,52 @@ Template.api.events({
       $(".lastRun").val(final[i].updatedTime);
     }
 
+    //modal
+    Meteor.call("getCronAPIHistory", propertyID, function (error, result) {
+      $("tbody#history-" + propertyID).html("");
+      for (var i = 0; i < result.length; i++) {
+        if (result == undefined) {
+          $("tbody#history-" + propertyID).append(
+            "<tr>" +
+            "<td colspan='4'>No result</td>" +
+            "</tr>"
+          );
+        } else {
+          for (var i = 0; i < result.length; i++) {
+            if (result[i].error == undefined) {
+              $("tbody#history-" + propertyID).append(
+                "<tr>" +
+                "<td>" + result[i].startedAt + "</td>" +
+                "<td>" + result[i].finishedAt + "</td>" +
+                "<td class=\"px-4\">No Error</td>" +
+                "</tr>"
+              );
+            } else {
+              $("tbody#history-" + propertyID).append(
+                "<tr>" +
+                "<td>" + result[i].startedAt + "</td>" +
+                "<td>" + result[i].finishedAt + "</td>" +
+                "<td><button class=\"result\" id=\'" + result[i]._id + "\' value=\'" + result[i]._id + "\'>" + result[i].error + "</button></td>" +
+                "</tr>"
+              );
+            }
+          }
+        }
+      }
+    })
   },
-  'change .filters': function (e) {
+  "click .result": function (event) {
+    var id = event.target.value;
+    var space = document.getElementById(id);
+    space.classList.toggle("add-space");
+  },
+  "change .filters": function (e) {
     apiIndex.getComponentMethods( /* optional name */ )
       .addProps('status', $(e.target).val());
-  },
-  'change #clientName': function (event) {
-    
-    $("#propertyName").html("");
-    var clientID = event.target.value;
-
-    var properties = Properties.find({createdBy: clientID}).fetch();
-    var propertiesRes = [];
-    for (var i = 0; i < properties.length; i++) {
-      propertiesRes.push({
-        _id: properties[i]._id,
-        propertyName: properties[i].propertyName
-      });
-      $("#propertyName").append("<option value='" + propertiesRes[i]._id + "'>" + propertiesRes[i].propertyName + "</option>");
-    }
   }
 });
+
+
 Template.api.helpers({
   apiIndex: () => apiIndex,
   inputAttributes: () => {

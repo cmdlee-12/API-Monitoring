@@ -52,10 +52,10 @@ Template.error.helpers({
             console.log(res[i].id);
             console.log(apiAddressl[i].statusRecord.length)
             for (var b = 0; b < apiAddressl[i].statusRecord.length; b++) {
-                    if (apiAddressl[i].statusRecord[b].responseTime == 0) {
-                        console.log(apiAddressl[i].statusRecord[b].time)
-                        return apiAddressl[i].statusRecord[b].time;
-                    }
+                if (apiAddressl[i].statusRecord[b].responseTime == 0) {
+                    console.log(apiAddressl[i].statusRecord[b].time)
+                    return apiAddressl[i].statusRecord[b].time;
+                }
             }
         }
     },
