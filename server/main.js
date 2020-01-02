@@ -495,7 +495,7 @@ Meteor.methods({
         });
         var apiId = apiAddress.findOne({
           createdBy: currentUser,
-          apiName: name,
+          apiName: name, 
           apiAddress: address
         })._id;
         Meteor.call('apiRefresher', frequency, apiId, currentUser);
