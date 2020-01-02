@@ -6,29 +6,41 @@ Template.report.onRendered(function () {
 
 });
 
+<<<<<<< HEAD
 var myChart; 
 Template.report.events({
     
     'click #run-report': function (event, template) {
+=======
+Template.report.events({
+    'click #run-report': function (event, template) {
+
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
         var propertyAPIType = document.getElementById('reportType');
         var propertyAPITypeVal = propertyAPIType.options[propertyAPIType.selectedIndex].value;
 
         var reportType = document.getElementById('report');
         var reportTypeVal = reportType.options[reportType.selectedIndex].value;
         console.log(reportTypeVal)
+<<<<<<< HEAD
 
         var propertyAPI = document.getElementById('propertyApiNames');
         var propertyAPIVal = propertyAPI.options[propertyAPI.selectedIndex].value;
 
         $(".performanceChart").attr("id", "performanceChart-" + propertyAPIVal)
 
+=======
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
         if (reportTypeVal == "checkHistory") {
             $(".uptime-show-wrapper").addClass("d-none");
             $(".uptime-show-wrapper").removeClass("d-block");
 
+<<<<<<< HEAD
             $(".performance-show-wrapper").addClass("d-none");
             $(".performance-show-wrapper").removeClass("d-block");
 
+=======
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
             if (propertyAPITypeVal == "api") {
                 $(".cron-show-wrapper").removeClass("d-none");
                 $(".cron-show-wrapper").addClass("d-block");
@@ -36,6 +48,7 @@ Template.report.events({
                 var propertyAPI = document.getElementById('propertyApiNames');
                 var propertyAPIVal = propertyAPI.options[propertyAPI.selectedIndex].value;
                 $("tbody.cron-table-wrapper").html("");
+<<<<<<< HEAD
                 Meteor.call("getCronHistory", propertyAPIVal, function (error, result) {
                     console.log("hello" + result)
                     if (result == undefined) {
@@ -55,6 +68,18 @@ Template.report.events({
                                 "</tr>"
                             );
                         }
+=======
+                console.log(propertyAPIVal)
+                Meteor.call("getCronHistory", propertyAPIVal, function (error, result) {
+                    for (var i = 0; i < result.length; i++) {
+                        $("tbody.cron-table-wrapper").append(
+                            "<tr>" +
+                            "<td>" + result[i].startedAt + "</td>" +
+                            "<td>" + result[i].finishedAt + "</td>" +
+                            "<td>" + result[i].result + "</td>" +
+                            "</tr>"
+                        );
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                     }
                 })
             } else if (propertyAPITypeVal == "property") {
@@ -64,6 +89,10 @@ Template.report.events({
                 var propertyAPI = document.getElementById('propertyApiNames');
                 var propertyAPIVal = propertyAPI.options[propertyAPI.selectedIndex].value;
                 $("tbody.cron-table-wrapper").html("");
+<<<<<<< HEAD
+=======
+                console.log(propertyAPIVal)
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                 Meteor.call("getPropertyCronHistory", propertyAPIVal, function (error, result) {
                     for (var i = 0; i < result.length; i++) {
                         $("tbody.cron-table-wrapper").append(
@@ -78,6 +107,7 @@ Template.report.events({
                 })
             }
         } else if (reportTypeVal == "performance") {
+<<<<<<< HEAD
             $(".performance-show-wrapper").addClass("d-block");
             $(".performance-show-wrapper").removeClass("d-none");
 
@@ -245,13 +275,23 @@ Template.report.events({
                 }
             }
 
+=======
+            $(".cron-show-wrapper").addClass("d-none");
+            $(".cron-show-wrapper").removeClass("d-block");
+            
+            $(".uptime-show-wrapper").addClass("d-none");
+            $(".uptime-show-wrapper").removeClass("d-block");
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
         } else if (reportTypeVal == "uptimeHistory") {
             $(".cron-show-wrapper").addClass("d-none");
             $(".cron-show-wrapper").removeClass("d-block");
 
+<<<<<<< HEAD
             $(".performance-show-wrapper").addClass("d-none");
             $(".performance-show-wrapper").removeClass("d-block");
 
+=======
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
             if (propertyAPITypeVal == "api") {
                 $(".uptime-show-wrapper").removeClass("d-none");
                 $(".uptime-show-wrapper").addClass("d-block");
@@ -272,8 +312,13 @@ Template.report.events({
                 }
                 var data = {
                     datasets: [{
+<<<<<<< HEAD
                         data: [apiArr[0].uptime, apiArr[0].downtime],
                         backgroundColor: ['#0FE2FF', '#5E5EEC']
+=======
+                            data: [apiArr[0].uptime, apiArr[0].downtime],
+                            backgroundColor: ['#0FE2FF', '#5E5EEC']
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                     }],
                     labels: [
                         'Uptime',
@@ -289,7 +334,11 @@ Template.report.events({
                             center: {
                                 text: [apiArr[0].uptime],
                                 color: '#000',
+<<<<<<< HEAD
                                 fontStyle: 'Proxima Nova Rg',
+=======
+                                fontStyle: 'Proxima Nova Rg',
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                                 sidePadding: 20
                             }
                         },
@@ -309,6 +358,7 @@ Template.report.events({
                 });
                 Chart.pluginService.register({
                     beforeDraw: function (chart) {
+<<<<<<< HEAD
                         if (chart.config.options.elements.center) {
                             //Get ctx from string
                             var ctx = chart.chart.ctx;
@@ -340,6 +390,39 @@ Template.report.events({
                             //Draw text in center
                             ctx.fillText(txt, centerX, centerY);
                         }
+=======
+                      if (chart.config.options.elements.center) {
+                        //Get ctx from string
+                        var ctx = chart.chart.ctx;
+                        //Get options from the center object in options
+                        var centerConfig = chart.config.options.elements.center;
+                        var fontStyle = centerConfig.fontStyle || 'Arial';
+                        var txt = centerConfig.text;
+                        var color = centerConfig.color || '#000';
+                        var sidePadding = centerConfig.sidePadding || 20;
+                        var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+                        //Start with a base font of 30px
+                        ctx.font = "40px " + fontStyle;
+                        //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+                        var stringWidth = ctx.measureText(txt).width;
+                        var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+                        // Find out how much the font can grow in width.
+                        var widthRatio = elementWidth / stringWidth;
+                        var newFontSize = Math.floor(30 * widthRatio);
+                        var elementHeight = (chart.innerRadius * 2);
+                        // Pick a new font size so it will not be larger than the height of label.
+                        var fontSizeToUse = Math.min(newFontSize, elementHeight);
+                        //Set font settings to draw it correctly.
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+                        var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+                        ctx.font = fontSizeToUse + "px " + fontStyle;
+                        ctx.fillStyle = color;
+                        //Draw text in center
+                        ctx.fillText(txt, centerX, centerY);
+                      }
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                     }
                 });
 
@@ -363,8 +446,13 @@ Template.report.events({
                 }
                 var data = {
                     datasets: [{
+<<<<<<< HEAD
                         data: [propertiesArr[0].uptime, propertiesArr[0].downtime],
                         backgroundColor: ['#0FE2FF', '#5E5EEC']
+=======
+                            data: [propertiesArr[0].uptime, propertiesArr[0].downtime],
+                            backgroundColor: ['#0FE2FF', '#5E5EEC']
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                     }],
                     labels: [
                         'Uptime',
@@ -380,7 +468,11 @@ Template.report.events({
                             center: {
                                 text: [propertiesArr[0].uptime],
                                 color: '#000',
+<<<<<<< HEAD
                                 fontStyle: 'Proxima Nova Rg',
+=======
+                                fontStyle: 'Proxima Nova Rg',
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                                 sidePadding: 20
                             }
                         },
@@ -400,6 +492,7 @@ Template.report.events({
                 });
                 Chart.pluginService.register({
                     beforeDraw: function (chart) {
+<<<<<<< HEAD
                         if (chart.config.options.elements.center) {
                             //Get ctx from string
                             var ctx = chart.chart.ctx;
@@ -431,13 +524,50 @@ Template.report.events({
                             //Draw text in center
                             ctx.fillText(txt, centerX, centerY);
                         }
+=======
+                      if (chart.config.options.elements.center) {
+                        //Get ctx from string
+                        var ctx = chart.chart.ctx;
+                        //Get options from the center object in options
+                        var centerConfig = chart.config.options.elements.center;
+                        var fontStyle = centerConfig.fontStyle || 'Arial';
+                        var txt = centerConfig.text;
+                        var color = centerConfig.color || '#000';
+                        var sidePadding = centerConfig.sidePadding || 20;
+                        var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+                        //Start with a base font of 30px
+                        ctx.font = "40px " + fontStyle;
+                        //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+                        var stringWidth = ctx.measureText(txt).width;
+                        var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+                        // Find out how much the font can grow in width.
+                        var widthRatio = elementWidth / stringWidth;
+                        var newFontSize = Math.floor(30 * widthRatio);
+                        var elementHeight = (chart.innerRadius * 2);
+                        // Pick a new font size so it will not be larger than the height of label.
+                        var fontSizeToUse = Math.min(newFontSize, elementHeight);
+                        //Set font settings to draw it correctly.
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+                        var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+                        ctx.font = fontSizeToUse + "px " + fontStyle;
+                        ctx.fillStyle = color;
+                        //Draw text in center
+                        ctx.fillText(txt, centerX, centerY);
+                      }
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
                     }
                 });
             }
         } else if (reportTypeVal == "alertHistory") {
 
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 78427ebe7d33e38aebb984fda19b4654eefa2c01
     },
     'change #reportType': function (event) {
         var reportVal = event.target.value;
