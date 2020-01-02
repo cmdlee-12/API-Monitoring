@@ -1,0 +1,106 @@
+<template name="report">
+    <div class="wrapper wrapper-content" id="main">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 col-md-12 col-sm-12 content-body__wrapper">
+                    <div class="row align-items-center px-5 py-3">
+                        <div class="col-lg-6">
+                            <h1 class="title">Reports</h1>
+                        </div>
+                    </div>
+                    <div class="row align-items-center px-5 pt-5 pb-3">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="reportType">Report Type</label>
+                                <select name="reportType" id="reportType" class="form-control py-4">
+                                    <option selected hidden>Type</option>
+                                    <option value="api">API</option>
+                                    <option value="property">Property</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="propertyApiNames">API/Property
+                                    Name</label>
+                                <select name="propertyApiNames" id="propertyApiNames" class="form-control py-4">
+                                    <option selected hidden>Property Name</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="report">Report</label>
+                                <select name="report" id="report" class="form-control py-4">
+                                    <option selected value="performance">
+                                        Performance</option>
+                                    <option value="checkHistory">Check History
+                                    </option>
+                                    <option value="alertHistory">Alert History
+                                    </option>
+                                    <option value="uptimeHistory">Uptime History
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mt-3">
+                            <div class="form-group">
+                                <label for="from">From</label>
+                                <input type="date" class="form-control py-4" id="adminFrom" placeholder="From">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mt-3">
+                            <div class="form-group">
+                                <label for="to">To</label>
+                                <input type="date" class="form-control py-4" id="adminTo" placeholder="To">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <button class="btn btn-add__website mt-4" id="run-report">Run Report</button>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="data-wrapper">
+                            <div class="cron-show-wrapper my-5 d-none">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h2>Check History</h2>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <table class="table table-striped" id="cron-table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Started At</th>
+                                                    <th scope="col">Finished At</th>
+                                                    <th scope="col">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="cron-table-wrapper">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uptime-show-wrapper my-5 d-none">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-6">
+                                        <canvas id="uptimeDowntime"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="performance-show-wrapper my-5 d-none">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-10">
+                                        <canvas class="performanceChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

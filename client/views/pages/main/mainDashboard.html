@@ -10,7 +10,8 @@
             <div class="col-lg-6">
               <div class="row justify-content-end">
                 <div class="input-group col-lg-6 search-wrapper">
-                  {{> EasySearch.Input index=propIndex attributes=inputAttributes}}
+                  {{> EasySearch.Input index=propIndex
+                  attributes=inputAttributes}}
                 </div>
               </div>
             </div>
@@ -18,84 +19,7 @@
           <div class="row align-items-center px-5 py-5">
             <div class="col-lg-6">
               <div class="row align-items-center">
-                <div class="col-lg-3" data-toggle="modal" data-target=".createReport">
-                  <button class="btn button-light"><img src="/icons/filter.png" class="img-fluid" alt="filter">Filter</button>
-                </div>
-                <!-- createReport -->
-                <div class="modal fade createReport" tabindex="-1" role="dialog" aria-labelledby="createReport"
-                  aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content py-4">
-                      <div class="modal-header">
-                        <div class="container">
-                          <div class="row">
-                            <div class="col-lg-12">
-                              <h4>Create Report</h4>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-body">
-                        <div class="container">
-                          <div class="row">
-                            <div class="col-lg-12">
-                              <form>
-                                <div class="col-lg-12 form-group">
-                                  <label for="adminPropertyName">Property Name</label>
-                                  <select name="adminPropertyName" id="adminPropertyName" class="form-control py-4">
-                                  </select>
-                                </div>
-                                <div class="col-lg-12 form-group">
-                                  <label for="adminPropertyName">Website / API</label>
-                                  <select name="websiteAPI" id="websiteAPI" class="form-control py-4">
-                                    <option selectedvalue="website">Website</option>
-                                    <option value="API">API</option>
-                                  </select>
-                                </div>
-                                <div class="col-lg-12 form-group">
-                                  <label for="Report">Report</label>
-                                  <select class="filters form-control">
-                                    <option selected value="performance">Performance</option>
-                                    <option value="checkHistory">Check History</option>
-                                    <option value="alertHistory">Alert History</option>
-                                    <option value="uptimeHistory">Uptime History</option>
-                                  </select>
-                                </div>
-                                <div class="col-lg-6 form-group">
-                                  <label for="adminPropertyName"></label>
-                                  <input class="form-control py-4" id="adminFrom" placeholder="From" required>
-                                </div>
-                                <div class="col-lg-6 form-group">
-                                  <label for="adminPropertyName"></label>
-                                  <input class="form-control py-4" id="adminTo" placeholder="To" required>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <div class="container">
-                          <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                              <button type="button" class="btn btn-close float-left"
-                                data-dismiss="modal">Close</button>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                              <button class="btn btn-add__website px-5" id="generateReport">Generate Report</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- createreport -->
-                <!-- <div class="col-lg-3">
-                  <button class="btn button-light"><img src="/icons/filter.png" class="img-flui" alt="filter">
-                    Filter</button>
-                </div> -->
-                <div class="col-lg-5">
+                <div class="col-lg-6">
                   <div class="form-group mb-0">
                     <select class="filters form-control">
                       <option selected disabled>Status</option>
@@ -108,58 +32,236 @@
               </div>
             </div>
             <div class="col-lg-6">
-              <button class="btn btn-add__website float-right btn-lg" data-toggle="modal" data-target=".addProperty"><i
-                  class="fas fa-plus"></i> Add Website</button>
-              <!-- Add property modal -->
-              <div class="modal fade addProperty" tabindex="-1" role="dialog" aria-labelledby="addProperty"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content py-4">
-                    <div class="modal-header">
-                      <div class="container">
-                        <div class="row">
-                          <div class="col-lg-12">
-                            <h4>Add API Details</h4>
+              <div class="row justify-content-end float-right">
+                <div class="col-lg-6 pr-0">
+                  <button
+                    class="btn btn-add__website btn-lg"
+                    data-toggle="modal"
+                    data-target=".addProperty"
+                  >
+                    <i class="fas fa-plus"></i> Add Website
+                  </button>
+                  <!-- Add property modal -->
+                  <div
+                    class="modal fade addProperty"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="addProperty"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog">
+                      <div class="modal-content py-4">
+                        <div class="modal-header">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <h4>Add API Details</h4>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="modal-body">
-                      <div class="container">
-                        <div class="row">
-                          <div class="col-lg-12">
-                            <form>
-                              <div class="form-group">
-                                <input class="form-control py-4" id="propertyName" placeholder="Property Name" required>
+                        <div class="modal-body">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <form>
+                                  <div class="form-group">
+                                    <label for="clientName">Client Name</label>
+                                    <select
+                                      name="clientName"
+                                      id="clientName"
+                                      class="form-control py-4"
+                                    >
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <input
+                                      class="form-control py-4"
+                                      id="propertyName"
+                                      placeholder="Property Name"
+                                      required
+                                    />
+                                  </div>
+                                  <div class="form-group">
+                                    <input
+                                      class="form-control py-4"
+                                      id="propertyURL"
+                                      placeholder="Property URL"
+                                      required
+                                    />
+                                  </div>
+                                  <div class="form">
+                                    <input
+                                      type="checkbox"
+                                      id="propertyStarred"
+                                      class="form-control"
+                                    />
+                                    <label for="propertyStarred">Starred</label>
+                                  </div>
+                                </form>
                               </div>
-                              <div class="form-group">
-                                <input class="form-control py-4" id="propertyURL" placeholder="Property URL" required>
-                              </div>
-                              <div class="form">
-                                <input type="checkbox" id="propertyStarred" class="form-control">
-                                <label for="propertyStarred">Starred</label>
-                              </div>
-                            </form>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <div class="container">
-                        <div class="row">
-                          <div class="col-lg-6 col-md-6 col-sm-6">
-                            <button type="button" class="btn btn-close float-left" data-dismiss="modal">Close</button>
-                          </div>
-                          <div class="col-lg-6 col-md-6 col-sm-6">
-                            <button class="btn btn-add__website px-5" id="add-property">Add</button>
+                        <div class="modal-footer">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-lg-6 col-md-6 col-sm-6">
+                                <button
+                                  type="button"
+                                  class="btn btn-close float-left"
+                                  data-dismiss="modal"
+                                >
+                                  Close
+                                </button>
+                              </div>
+                              <div class="col-lg-6 col-md-6 col-sm-6">
+                                <button
+                                  class="btn btn-add__website px-5"
+                                  id="add-property"
+                                >
+                                  Add
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <!-- End of property modal -->
+                </div>
+                <div class="col-lg-6 pl-0">
+                  {{#if $eq currentUser.profile.role 'Administrator'}}
+                  <div
+                    class="col-lg-6"
+                    data-toggle="modal"
+                    data-target=".createReport"
+                  >
+                    <button class="btn btn-add__website btn-lg">
+                      <i class="fas fa-file-alt"></i> Create Report
+                    </button>
+                  </div>
+                  <!-- createReport -->
+                  <div
+                    class="modal fade createReport"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="createReport"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog">
+                      <div class="modal-content py-4">
+                        <div class="modal-header">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <h4>Create Report</h4>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-body">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <form>
+                                  <div class="col-lg-12 form-group">
+                                    <label for="adminPropertyName"
+                                      >Property Name</label
+                                    >
+                                    <select
+                                      name="adminPropertyName"
+                                      id="adminPropertyName"
+                                      class="form-control py-4"
+                                    >
+                                    </select>
+                                  </div>
+                                  <div class="col-lg-12 form-group">
+                                    <label for="adminPropertyName"
+                                      >Website / API</label
+                                    >
+                                    <select
+                                      name="websiteAPI"
+                                      id="websiteAPI"
+                                      class="form-control py-4"
+                                    >
+                                      <option selectedvalue="website"
+                                        >Website</option
+                                      >
+                                      <option value="API">API</option>
+                                    </select>
+                                  </div>
+                                  <div class="col-lg-12 form-group">
+                                    <label for="Report">Report</label>
+                                    <select class="filters form-control">
+                                      <option selected value="performance"
+                                        >Performance</option
+                                      >
+                                      <option value="checkHistory"
+                                        >Check History</option
+                                      >
+                                      <option value="alertHistory"
+                                        >Alert History</option
+                                      >
+                                      <option value="uptimeHistory"
+                                        >Uptime History</option
+                                      >
+                                    </select>
+                                  </div>
+                                  <div class="col-lg-6 form-group">
+                                    <label for="adminPropertyName"></label>
+                                    <input
+                                      class="form-control py-4"
+                                      id="adminFrom"
+                                      placeholder="From"
+                                      required
+                                    />
+                                  </div>
+                                  <div class="col-lg-6 form-group">
+                                    <label for="adminPropertyName"></label>
+                                    <input
+                                      class="form-control py-4"
+                                      id="adminTo"
+                                      placeholder="To"
+                                      required
+                                    />
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-lg-6 col-md-6 col-sm-6">
+                                <button
+                                  type="button"
+                                  class="btn btn-close float-left"
+                                  data-dismiss="modal"
+                                >
+                                  Close
+                                </button>
+                              </div>
+                              <div class="col-lg-6 col-md-6 col-sm-6">
+                                <button
+                                  class="btn btn-add__website px-5"
+                                  id="generateReport"
+                                >
+                                  Generate Report
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- createreport -->
+                  {{/if}}
                 </div>
               </div>
-              <!-- End of property modal -->
             </div>
           </div>
           <div id="mySidenav" class="sidenav">
@@ -206,17 +308,41 @@
                     </div>
                   </div>
                   <div class="row actions-wrapper align-items-center px-3 py-5">
-                    <div class="col-lg-3"> <a id="apiLink" data-toggle="tooltip" data-placement="bottom"
-                        title="Reports"><img src="/icons/view-reports.png" class="img-fluid" alt="view-reports"></a>
+                    <div class="col-lg-3">
+                      <a
+                        id="apiLink"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Reports"
+                        ><img
+                          src="/icons/view-reports.png"
+                          class="img-fluid"
+                          alt="view-reports"
+                      /></a>
                     </div>
-                    <div class="col-lg-3"> <a href="#" data-toggle="modal" id="editPropertyDetails"><img
-                          src="/icons/edit.png" class="img-fluid" alt="edit"></a></div>
-                    <div class="col-lg-3"> <a href="#" data-toggle="modal" id="addAPIProperty"><img
-                          src="/icons/add_icon.png" class="img-fluid" alt="add-icon"></a>
+                    <div class="col-lg-3">
+                      <a href="#" data-toggle="modal" id="editPropertyDetails"
+                        ><img src="/icons/edit.png" class="img-fluid" alt="edit"
+                      /></a>
                     </div>
-                    <div class="col-lg-3"><input type="image" id="btn-property" src="/icons/pause.png"
-                        data-toggle="tooltip" data-placement="bottom" title="Run"></div>
-
+                    <div class="col-lg-3">
+                      <a href="#" data-toggle="modal" id="addAPIProperty"
+                        ><img
+                          src="/icons/add_icon.png"
+                          class="img-fluid"
+                          alt="add-icon"
+                      /></a>
+                    </div>
+                    <div class="col-lg-3">
+                      <input
+                        type="image"
+                        id="btn-property"
+                        src="/icons/pause.png"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Run"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -225,19 +351,26 @@
           <!-- Properties -->
           {{#if $eq currentUser.profile.role 'Client'}}
           <div class="container-fluid">
-            {{#EasySearch.Each index=propIndex}}
-            {{#if $eq createdBy currentUser._id}}
+            {{#EasySearch.Each index=propIndex}} {{#if $eq createdBy
+            currentUser._id}}
             <div class="row px-5">
               <div class="col-lg-12">
-                <div class="property-card row mb-5 openNav" id="arrow-{{__originalId}}" data-post-id="{{__originalId}}"
-                  name="propertyCard">
+                <div
+                  class="property-card row mb-5 openNav"
+                  id="arrow-{{__originalId}}"
+                  data-post-id="{{__originalId}}"
+                  name="propertyCard"
+                >
                   <div class="col-lg-4 py-4">
                     <div class="row">
                       <div class="col-lg-12">
                         <div class="row">
                           <div class="col-lg-2 px-0">
-                            <img src="https://www.google.com/s2/favicons?domain={{propertyURL}}" class="img-fluid"
-                              alt="property-logo">
+                            <img
+                              src="https://www.google.com/s2/favicons?domain={{propertyURL}}"
+                              class="img-fluid"
+                              alt="property-logo"
+                            />
                           </div>
                           <div class="col-lg-10 pl-0">
                             <h4 class="title">{{propertyName}}</h4>
@@ -248,29 +381,40 @@
                     </div>
                   </div>
                   <div class="col-lg-7 py-4">
-                    <div class="row align-items-center justify-content-center data-wrapper">
+                    <div
+                      class="row align-items-center justify-content-center data-wrapper"
+                    >
                       <div class="col-lg-4">
                         {{#if $eq status 'Up'}}
                         <span class="status-{{__originalId}}">
-                          <img src='/icons/up.png' class='img-fluid'>
+                          <img src="/icons/up.png" class="img-fluid" />
                         </span>
-                        {{/if}}
-                        {{#if $eq status 'Down'}}
+                        {{/if}} {{#if $eq status 'Down'}}
                         <span class="status-{{__originalId}}">
-                          <img src='/icons/down.png' class='img-fluid'>
+                          <img src="/icons/down.png" class="img-fluid" />
                         </span>
                         {{/if}}
                       </div>
                       <div class="col-lg-4">
-                        <input class="updown-chart w-100" id="upDownTime-{{__originalId}}" value="{{__originalId}}"
-                          hidden>
+                        <input
+                          class="updown-chart w-100"
+                          id="upDownTime-{{__originalId}}"
+                          value="{{__originalId}}"
+                          hidden
+                        />
                         <canvas id="upChart-{{__originalId}}"></canvas>
                       </div>
                       <div class="col-lg-4">
-                        <span class="pageSpeed-{{__originalId}} text-center" id="gradient">{{pageSpeed}}</span>
+                        <span
+                          class="pageSpeed-{{__originalId}} text-center"
+                          id="gradient"
+                          >{{pageSpeed}}</span
+                        >
                       </div>
                     </div>
-                    <div class="row align-items-center justify-content-center d-none d-lg-block">
+                    <div
+                      class="row align-items-center justify-content-center d-none d-lg-block"
+                    >
                       <div class="col-lg-4 col-md-4">
                         <h4 class="data-title">Status</h4>
                       </div>
@@ -286,8 +430,13 @@
               </div>
             </div>
             <!-- edit modal of sidebar-->
-            <div class="modal fade editProperty-{{__originalId}}" tabindex="-1" role="dialog"
-              aria-labelledby="editProperty" aria-hidden="true">
+            <div
+              class="modal fade editProperty-{{__originalId}}"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="editProperty"
+              aria-hidden="true"
+            >
               <div class="modal-dialog">
                 <div class="modal-content py-4">
                   <div class="modal-header">
@@ -305,16 +454,29 @@
                         <div class="col-lg-12">
                           <form>
                             <div class="form-group">
-                              <input class="form-control py-4" id="propertyName-{{__originalId}}"
-                                placeholder="Property Name" required value="">
+                              <input
+                                class="form-control py-4"
+                                id="propertyName-{{__originalId}}"
+                                placeholder="Property Name"
+                                required
+                                value=""
+                              />
                             </div>
                             <div class="form-group">
-                              <input class="form-control py-4" id="propertyURL-{{__originalId}}"
-                                placeholder="Property URL" required value="">
+                              <input
+                                class="form-control py-4"
+                                id="propertyURL-{{__originalId}}"
+                                placeholder="Property URL"
+                                required
+                                value=""
+                              />
                             </div>
                             <div class="form-group">
                               <label for="updatingFrequency">Frequency</label>
-                              <select id="updatingFrequency-{{__originalId}}" class="selectpicker form-control">
+                              <select
+                                id="updatingFrequency-{{__originalId}}"
+                                class="selectpicker form-control"
+                              >
                                 <option>every 30 seconds</option>
                                 <option>every 15 minutes</option>
                                 <option>every 30 minutes</option>
@@ -323,8 +485,14 @@
                               </select>
                             </div>
                             <div class="form mt-3">
-                              <input type="checkbox" id="propertyStarred-{{__originalId}}" class="form-control">
-                              <label for="propertyStarred-{{__originalId}}">Starred</label>
+                              <input
+                                type="checkbox"
+                                id="propertyStarred-{{__originalId}}"
+                                class="form-control"
+                              />
+                              <label for="propertyStarred-{{__originalId}}"
+                                >Starred</label
+                              >
                             </div>
                           </form>
                         </div>
@@ -335,11 +503,22 @@
                     <div class="container">
                       <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
-                          <button type="button" class="btn btn-close float-left" data-dismiss="modal">Close</button>
+                          <button
+                            type="button"
+                            class="btn btn-close float-left"
+                            data-dismiss="modal"
+                          >
+                            Close
+                          </button>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-6">
-                          <button class="btn btn-add__website px-5" id="edit-property"
-                            value="{{__originalId}}">Edit</button>
+                          <button
+                            class="btn btn-add__website px-5"
+                            id="edit-property"
+                            value="{{__originalId}}"
+                          >
+                            Edit
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -349,8 +528,13 @@
             </div>
             <!-- end of edit modal -->
             <!-- add api modal -->
-            <div class="modal fade addApi-{{__originalId}}" tabindex="-1" role="dialog" aria-labelledby="addAPI"
-              aria-hidden="true">
+            <div
+              class="modal fade addApi-{{__originalId}}"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="addAPI"
+              aria-hidden="true"
+            >
               <div class="modal-dialog" role="document">
                 <div class="modal-content py-4">
                   <div class="modal-header">
@@ -368,36 +552,64 @@
                         <div class="col-lg-12">
                           <form>
                             <div class="form-group">
-                              <label for="formGroupExampleInput">API Name</label>
-                              <input class="form-control" id="formGroupExampleInput-{{__originalId}}" placeholder="Name"
-                                required>
+                              <label for="formGroupExampleInput"
+                                >API Name</label
+                              >
+                              <input
+                                class="form-control"
+                                id="formGroupExampleInput-{{__originalId}}"
+                                placeholder="Name"
+                                required
+                              />
                             </div>
                             <div class="form-group">
-                              <label for="formGroupExampleInput2">API Access Url</label>
-                              <input class="form-control" id="formGroupExampleInput2-{{__originalId}}" placeholder="Url"
-                                required>
+                              <label for="formGroupExampleInput2"
+                                >API Access Url</label
+                              >
+                              <input
+                                class="form-control"
+                                id="formGroupExampleInput2-{{__originalId}}"
+                                placeholder="Url"
+                                required
+                              />
                             </div>
                             <div class="form-group">
-                              <label for="authorization">Authentication (if required)</label>
-                              <input class="form-control" id="authorization-{{__originalId}}"
-                                placeholder="username:password">
+                              <label for="authorization"
+                                >Authentication (if required)</label
+                              >
+                              <input
+                                class="form-control"
+                                id="authorization-{{__originalId}}"
+                                placeholder="username:password"
+                              />
                             </div>
                             <div class="form-group">
                               <label for="getOrPost">API Access</label>
-                              <select class="selectpicker form-control" id="getOrPost-{{__originalId}}">
+                              <select
+                                class="selectpicker form-control"
+                                id="getOrPost-{{__originalId}}"
+                              >
                                 <option>GET</option>
                                 <option>POST</option>
                               </select>
                             </div>
                             <div class="form-group">
                               <label for="usageOrStatus">Usage or Status</label>
-                              <select class="selectpicker form-control" id="usageOrStatus-{{__originalId}}">
+                              <select
+                                class="selectpicker form-control"
+                                id="usageOrStatus-{{__originalId}}"
+                              >
                                 <option>Status</option>
                               </select>
                             </div>
                             <div class="form-group">
-                              <label for="addingFrequency">Status update frequency</label>
-                              <select id="addingFrequency-{{__originalId}}" class="selectpicker form-control">
+                              <label for="addingFrequency"
+                                >Status update frequency</label
+                              >
+                              <select
+                                id="addingFrequency-{{__originalId}}"
+                                class="selectpicker form-control"
+                              >
                                 <option>every 30 seconds</option>
                                 <option>every 15 minutes</option>
                                 <option>every 30 minutes</option>
@@ -414,9 +626,22 @@
                     <div class="container">
                       <div class="row">
                         <div class="col-lg-12">
-                          <button type="button" class="btn btn-danger px-3" data-dismiss="modal">Cancel</button>
-                          <button type="button" class="btn btn-add__website px-3" id="add" data-dismiss="modal"
-                            value="{{__originalId}}">Add API</button>
+                          <button
+                            type="button"
+                            class="btn btn-danger px-3"
+                            data-dismiss="modal"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-add__website px-3"
+                            id="add"
+                            data-dismiss="modal"
+                            value="{{__originalId}}"
+                          >
+                            Add API
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -425,9 +650,8 @@
               </div>
             </div>
             <!-- end of add api modal -->
-            {{/if}}
-            {{/EasySearch.Each}}
-            {{#EasySearch.IfNoResults index=propIndex}}
+            {{/if}} {{/EasySearch.Each}} {{#EasySearch.IfNoResults
+            index=propIndex}}
             <div>No results found!</div>
             {{/EasySearch.IfNoResults}}
           </div>

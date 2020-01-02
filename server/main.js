@@ -4,6 +4,8 @@ import {
   Template
 } from 'meteor/meteorhacks:ssr';
 
+import {SyncedCron} from 'meteor/percolate:synced-cron';
+
 var moment = Npm.require('moment');
 var slackBot = Npm.require('slack-bot')(Meteor.settings.private.webhookUrl);
 
@@ -38,8 +40,8 @@ Meteor.users.allow({
   }
 })
 
-Meteor.startup(() => {
 
+Meteor.startup(() => {
   // code to run on server at startup
   process.env.MAIL_URL = "smtp://apikey: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@smtp.sendgrid.net:2525"; //only change 'yourApiKey' and the port(if required)
 
@@ -94,9 +96,52 @@ Meteor.startup(() => {
   });
 
   SyncedCron.start();
+  SyncedCron._collection.find();
+
 });
 
 Meteor.methods({
+  'getCronHistory': function (id){
+    var data = SyncedCron._collection.find({name : id}).fetch();
+    var dataArr = [];
+    
+    for(var i = 0; i < data.length; i++){
+      dataArr.push({
+        _id: data[i]._id,
+        name: data[i].name,
+        startedAt: data[i].startedAt,
+        finishedAt: data[i].finishedAt,
+        error: data[i].error,
+        result: data[i].result
+      });
+      return data;
+    }
+  },
+  'getPropertyCronHistory': function (id){
+
+    var api = apiAddress.find({propertyID: id}).fetch();
+    var apiArr = [];
+
+    for(var x = 0; x < api.length; x++){
+      apiArr.push({
+        _id: api[x]._id
+      });
+    }
+    var data = SyncedCron._collection.find({name : apiArr[0]._id}).fetch();
+    var dataArr = [];
+    
+    for(var i = 0; i < data.length; i++){
+      dataArr.push({
+        _id: data[i]._id,
+        name: data[i].name,
+        startedAt: data[i].startedAt,
+        finishedAt: data[i].finishedAt,
+        error: data[i].error,
+        result: data[i].result
+      });
+      return data;
+    }
+  },
   'getLastRun': function (id, url) {
     var apiAddress1 = apiAddress.find({
       propertyID: id
@@ -282,198 +327,6 @@ Meteor.methods({
       isStarred: isStarred
     });
   },
-  'addAdminApi': function (clientName, clientID, propertyName, propertyValue, name, address, getOrPost, usageOrStatus, authentication, frequency, isProperty) {
-    console.dir(address);
-    console.dir(authentication);
-    var username = Meteor.users.findOne({
-      _id: clientID
-    }).username;
-
-    var propertyName = [];
-    var property = Properties.find({
-      _id: propertyValue
-    }).fetch();
-
-    for (var i = 0; i < property.length; i++) {
-      propertyName.push({
-        name: property[i].propertyName,
-        url: property[i].propertyURL
-      })
-    }
-
-    if (apiAddress.find({
-        createdBy: clientID,
-        apiAddress: address
-      }).count() > 0) {
-      return "You have used this API url for a different API already";
-    } else {
-      addingApiSearch.insert({
-        createdBy: clientID
-      });
-
-      if (getOrPost === "GET") {
-        try {
-          var res = [];
-          var responseTime;
-          if (authentication) {
-            var start = new Date();
-            res = HTTP.get(address, {
-              auth: authentication
-            });
-            responseTime = new Date() - start;
-            var postingTime = moment(start).format("MMM Do YYYY, h:mm:ss a");
-            try {
-              apiAddress.insert({
-                createdByName: clientName,
-                createdBy: clientID,
-                apiName: name,
-                apiAddress: address,
-                authentication: authentication,
-                getOrPost: getOrPost,
-                usageOrStatus: usageOrStatus,
-                response: res.data,
-                updatedTime: postingTime,
-                headers: res.headers,
-                status: "pass",
-                frequency: frequency,
-                responseTime: responseTime,
-                propertyID: propertyValue,
-                propertyName: propertyName[0].name,
-                propertyURL: propertyName[0].url,
-                isProperty: isProperty
-              });
-
-            } catch (err) {
-              apiAddress.insert({
-                createdByName: clientName,
-                createdBy: clientID,
-                apiName: name,
-                apiAddress: address,
-                authentication: authentication,
-                getOrPost: getOrPost,
-                usageOrStatus: usageOrStatus,
-                response: "Response was too long.",
-                updatedTime: postingTime,
-                headers: res.headers,
-                status: "pass",
-                frequency: frequency,
-                responseTime: responseTime,
-                propertyID: propertyValue,
-                propertyName: propertyName[0].name,
-                propertyURL: propertyName[0].url,
-                isProperty: isProperty
-              });
-            }
-          } else {
-            var start = new Date();
-            res = HTTP.get(address);
-            responseTime = new Date() - start;
-            var postingTime = moment(start).format("MMM Do YYYY, h:mm:ss a");
-            try {
-              apiAddress.insert({
-                createdByName: clientName,
-                createdBy: clientID,
-                apiName: name,
-                apiAddress: address,
-                getOrPost: getOrPost,
-                usageOrStatus: usageOrStatus,
-                response: res.data,
-                updatedTime: postingTime,
-                headers: res.headers,
-                status: "pass",
-                frequency: frequency,
-                responseTime: responseTime,
-                propertyID: propertyValue,
-                propertyName: propertyName[0].name,
-                isProperty: isProperty
-              });
-
-            } catch (err) {
-              apiAddress.insert({
-                createdByName: clientName,
-                createdBy: clientID,
-                apiName: name,
-                apiAddress: address,
-                getOrPost: getOrPost,
-                usageOrStatus: usageOrStatus,
-                response: "Response was too long.",
-                updatedTime: postingTime,
-                headers: res.headers,
-                status: "pass",
-                frequency: frequency,
-                responseTime: responseTime,
-                propertyID: propertyValue,
-                propertyName: propertyName[0].name,
-                isProperty: isProperty
-              });
-            }
-          }
-          if (apiAddress.find({
-              createdBy: clientID
-            }).count() === 1) {
-            var start = new Date();
-            if (apiErrors.find({
-                createdBy: clientID
-              }).count === 0) {
-              apiErrors.insert({
-                createdBy: clientID
-              });
-            }
-            Meteor.call("overallErrorChecker", clientID);
-            Meteor.call("resetIndividualGraphs", clientID);
-            individualGraphsTasks.remove({
-              createdBy: clientID
-            });
-            individualGraphsTasks.insert({
-              createdBy: clientID,
-              lastReset: start
-            });
-            overallGraphsTasks.remove({
-              createdBy: clientID
-            });
-            overallGraphsTasks.insert({
-              createdBy: clientID
-            });
-          }
-          //console.dir(res.statusCode); if you want to show the status code of the API call
-        } catch (err) {
-          addingApiSearch.remove({
-            createdBy: clientID
-          });
-          console.log("Error: ", err);
-
-          return err.response.content;
-        }
-        addingApiSearch.remove({
-          createdBy: clientID
-        });
-        var apiId = apiAddress.findOne({
-          createdBy: clientID,
-          apiName: name,
-          apiAddress: address
-        })._id;
-        Meteor.call('apiRefresher', frequency, apiId, clientID);
-        FutureTasks.insert({
-          createdBy: clientID,
-          frequency: "Every 1 hour",
-          apiId: apiId
-        });
-      } else {
-        var res = HTTP.post(address);
-        apiAddress.insert({
-          createdByName: username,
-          createdBy: clientID,
-          apiName: name,
-          apiAddress: address,
-          getOrPost: getOrPost,
-          usageOrStatus: usageOrStatus,
-          path: path,
-          response: res.data
-        });
-      }
-    }
-
-  },
   'updateApi': function (id, name, address, getOrPost, usageOrStatus, authentication, frequency, propertyID, isProperty) {
     console.dir(address);
     console.dir(authentication);
@@ -642,7 +495,7 @@ Meteor.methods({
         });
         var apiId = apiAddress.findOne({
           createdBy: currentUser,
-          apiName: name,
+          apiName: name, 
           apiAddress: address
         })._id;
         Meteor.call('apiRefresher', frequency, apiId, currentUser);
