@@ -12,8 +12,8 @@ Template.register.events({
       email: email,
       password: password,
       profile: {
-        role: role
-        // captcha: captchaData
+        role: role,
+        status: 'active'
       }
     }, function (error) {
       if (error) {

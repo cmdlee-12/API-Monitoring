@@ -1,0 +1,40 @@
+<template name="client">
+    <div class="wrapper wrapper-content" id="main">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 col-md-12 col-sm-12 content-body__wrapper">
+                    <div class="row align-items-center px-5 py-3">
+                        <div class="col-lg-6">
+                            <h1 class="title">Clients</h1>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row justify-content-end">
+                                <div class="input-group col-lg-6 search-wrapper">
+                                    {{> EasySearch.Input index=apiIndex
+                      attributes=inputAttributes}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-striped" id="cron-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Started At</th>
+                                            <th scope="col">Finished At</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="user-table-wrapper">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
