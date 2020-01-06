@@ -6,6 +6,7 @@ Template.register.events({
     var email = $('[name=email]').val();
     var password = $('[name=password]').val();
     var role = "Client";
+    var status = "active";
     
     Accounts.createUser({
       username: username,
@@ -13,7 +14,7 @@ Template.register.events({
       password: password,
       profile: {
         role: role,
-        status: 'active'
+        status: status
       }
     }, function (error) {
       if (error) {

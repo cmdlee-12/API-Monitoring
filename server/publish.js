@@ -36,15 +36,9 @@ Meteor.publish("clients", function () {
 });
 
 Meteor.publish("users", function () {
-
-  return Meteor.users.find({}, {
-    fields: {
-      username: 1,
-      emails: 1,
-      'profile.role': 1,
-      'profile.url': 1
-    }
-  });
+  
+  return Meteor.users.find({});
+  
 });
 
 Meteor.publish("properties", function () {
