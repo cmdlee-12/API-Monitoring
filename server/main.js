@@ -733,6 +733,23 @@ Meteor.methods({
       }
     });
   },
+  'updateClientDetails': function (id, titleValue, firstName, lastName, userName, email, number, countryValue, roleValue, statusValue) {
+    Meteor.users.update({
+      _id: id
+    }, {
+      $set: {
+        username: userName,
+        "profile.title": titleValue,
+        "profile.firstName": firstName,
+        "profile.lastName": lastName,
+        "profile.phone": number,
+        "profile.country": countryValue,
+        "profile.role": roleValue,
+        "profile.status": statusValue,
+        "emails.0.address": email
+      }
+    });
+  },
   'removeApi': function (id) {
     apiAddress.remove({
       _id: id

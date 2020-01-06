@@ -32,7 +32,32 @@ Template.client.onRendered(function () {
 });
 
 Template.client.events({
-  
+  'click #btn-profile-submit': function (events){
+    var id = events.target.value;
+    
+    var title = document.getElementById('title-' + id);
+    var titleValue = title.options[title.selectedIndex].value;
+    var country = document.getElementById('country-' + id);
+    var countryValue = country.options[country.selectedIndex].value;
+    var role = document.getElementById('role-' + id);
+    var roleValue = role.options[role.selectedIndex].value;
+    var status = document.getElementById('status-' + id);
+    var statusValue = status.options[status.selectedIndex].value;
+
+    var firstName = $("#firstName-"+id).val();
+    var lastName = $("#lastName-"+id).val();
+    var username = $("#username-"+id).val();
+    var email = $("#email-"+id).val();
+    var number = $("#number-"+id).val();
+
+    Meteor.call("updateClientDetails", id, titleValue, firstName, lastName, username, email, number, countryValue, roleValue, statusValue, function(error){
+      if(error){
+        toastr.error("Error", error);
+      }else{
+        toastr.success("User successfully updated!", "Sucess")
+      }
+    });
+  }
 });
 
 Template.client.helpers({
