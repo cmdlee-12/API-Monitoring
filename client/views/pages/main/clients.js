@@ -1,4 +1,4 @@
-Template.client.onRendered(function () {
+ Template.client.onRendered(function () {
 
     sideBar();
 
@@ -55,6 +55,40 @@ Template.client.events({
         toastr.error("Error", error);
       }else{
         toastr.success("User successfully updated!", "Sucess")
+      }
+    });
+  },
+
+  'click #add-user': function () {
+    // code goes here
+    event.preventDefault();
+    var username = $('[name=name]').val();
+    var email = $('[name=email]').val();
+    var password = $('[name=password]').val();
+    var role = "Client";
+    var status = "active";
+    
+    Accounts.createUser({
+      username: username,
+      email: email,
+      password: password,
+      profile: {
+        role: role,
+        status: status
+      }
+    }, function (error) {
+      if (error) {
+        Swal.fire({
+          type: 'error',
+          title: 'Oops...',
+          text: error.reason
+        })
+      }else {
+        Swal.fire(
+          'Good job!',
+          'You have successfully added an account!',
+          'success'
+        )
       }
     });
   }
