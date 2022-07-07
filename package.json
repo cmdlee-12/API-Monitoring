@@ -9,7 +9,7 @@
     "bcrypt": "^3.0.6",
     "fusioncharts": "^3.14.1",
     "meteor-node-stubs": "^0.2.11",
-    "moment": "^2.18.1",
+    "moment": "^2.29.4",
     "mongodb": "^3.3.3",
     "slack-bot": "^1.1.5"
   }
